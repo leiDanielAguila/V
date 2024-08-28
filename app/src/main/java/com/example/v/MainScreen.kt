@@ -198,8 +198,6 @@ fun SettingsAndSoundButton(
         else -> painterResource(id = R.drawable.baseline_volume_off_24)
     }
 
-
-
     Column(
         modifier.padding(12.dp)
     ) {
