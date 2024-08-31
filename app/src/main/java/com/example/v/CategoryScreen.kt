@@ -27,6 +27,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Yellow
@@ -34,7 +36,7 @@ import com.example.v.ui.theme.differentBlack
 import com.example.v.ui.theme.lightRed
 
 @Composable
-fun CategoryScreen(modifier: Modifier = Modifier) {
+fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) {
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -52,7 +54,7 @@ fun CategoryScreen(modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .padding(horizontal = 16.dp, vertical = 36.dp),
         ) {
-            BackButton()
+            BackButton(navController = navController)
         }
 
         Column(
@@ -159,10 +161,13 @@ fun TechnologyCard(modifier: Modifier = Modifier) {
 }
 
 @Composable
-fun BackButton(modifier: Modifier = Modifier) {
+fun BackButton(modifier: Modifier = Modifier, navController: NavController) {
     Box(
         modifier = Modifier
-            .clickable { /*TODO*/ }
+            .clickable {
+                SoundManager.playSound()
+                navController.navigate(MainMenu)
+            }
             .clip(shape = RoundedCornerShape(20.dp))
             .background(differentBlack)
             .size(width = 118.dp, height = 62.dp),
@@ -192,5 +197,5 @@ fun BackButton(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun CategoryScreenPreview(modifier: Modifier = Modifier) {
-    CategoryScreen()
+    CategoryScreen(navController = rememberNavController())
 }
