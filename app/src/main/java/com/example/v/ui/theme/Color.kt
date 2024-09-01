@@ -15,3 +15,11 @@ val lightRed = Color(0xFFFFBD80)
 val differentBlack = Color(0xFF23201F)
 val lighterBrown = Color(0xFFF4B67C)
 val Yellow = Color(0xFFfdfd00)
+
+val navyBlue = Color(0xFF1e3a40)
+val darkRed = Color(0xFF8d3737)
+val lightBlue = Color(0xFF4d9cab)
+
+val onyx = Color(0xFF353935)
+val cream = Color(0xFFFAF9F6)
+val pastelGreen = Color(0xFFC1E1C1)

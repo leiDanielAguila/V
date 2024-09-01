@@ -51,6 +51,9 @@ class MainActivity : ComponentActivity() {
                         composable<CategoryScreen> {
                             CategoryScreen(navController = navController)
                         }
+                        composable<MovieEasy> {
+                            MovieScreen(navController = navController)
+                        }
                     }
                 }
             }
@@ -63,3 +66,6 @@ object MainMenu
 
 @Serializable
 object CategoryScreen
+
+@Serializable
+object MovieEasy
