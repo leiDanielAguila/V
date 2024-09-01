@@ -65,7 +65,7 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
             horizontalAlignment = Alignment.CenterHorizontally,
            // verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            MovieCard()
+            MovieCard(navController = navController)
         }
 
         Column(
@@ -82,10 +82,10 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
 }
 
 @Composable
-fun MovieCard(modifier: Modifier = Modifier) {
+fun MovieCard(modifier: Modifier = Modifier, navController: NavController) {
     Box(
         modifier = Modifier
-            .clickable { /* TODO */ }
+            .clickable { navController.navigate(MovieEasy) }
             .size(width = 268.dp, height = 181.dp)
     ) {
         Image(
