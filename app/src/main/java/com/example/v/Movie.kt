@@ -6,6 +6,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -74,6 +76,52 @@ fun MovieScreen(modifier: Modifier = Modifier, navController: NavController) {
                 },
                 navController = navController
             )
+        }// Button Bar Column
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painterResource(R.drawable.movie_card) ,
+                contentDescription = "",
+                modifier = Modifier
+                    .padding(horizontal = 0.dp, vertical = 30.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Image(
+                painterResource(R.drawable.moviedifficultyeasy),
+                contentDescription = "",
+                modifier = Modifier
+                    .padding(horizontal = 0.dp, vertical = 150.dp)
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxSize(),
+        ) {
+            Image(
+                painterResource(R.drawable.score_movie),
+                contentDescription = "",
+                modifier = Modifier
+                    .padding(vertical = 125.dp, horizontal = 12.dp),
+                )
+        }
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            GameTiles()
         }
 
     }
@@ -146,11 +194,16 @@ fun ButtonBar(
 }
 
 @Composable
+fun MovieInputBox(modifier: Modifier = Modifier) {
+    
+}
+
+@Composable
 fun GameTiles() {
-    val boxCountMovie1 = 64
     Surface(
-        modifier = Modifier.size(width = 350.dp, height = 290.dp),
-        color = Color.Transparent
+        modifier = Modifier.size(width = 300.dp, height = 300.dp),
+        color = Color.Transparent,
+        shape = RoundedCornerShape(15.dp)
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(8),
@@ -158,10 +211,29 @@ fun GameTiles() {
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp)
+                .padding(4.dp)
         ) {
             items(count = boxCountMovie1) {
-
+                if (it in movieTilesNumber) {
+                    Surface(
+                        modifier = Modifier.size(width = 20.dp, height = 30.dp),
+                        color = Color.White,
+                        shape = RoundedCornerShape(3.dp)
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (it == 1) {
+                                Text(text = "A")
+                            }
+                            else if (it == 13) {
+                                Text(text = "B")
+                            }
+                        }
+                    }
+                }
             }
         }
     } // Game Tiles
@@ -172,4 +244,3 @@ fun GameTiles() {
 fun MoviePreview() {
     MovieScreen(navController = rememberNavController())
 }
-
