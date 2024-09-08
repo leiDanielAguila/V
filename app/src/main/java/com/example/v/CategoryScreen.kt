@@ -85,7 +85,10 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
 fun MovieCard(modifier: Modifier = Modifier, navController: NavController) {
     Box(
         modifier = Modifier
-            .clickable { navController.navigate(MovieEasy) }
+            .clickable {
+                navController.navigate(MovieEasy)
+                SoundManager.clickSound()
+            }
             .size(width = 268.dp, height = 181.dp)
     ) {
         Image(
@@ -165,7 +168,7 @@ fun BackButton(modifier: Modifier = Modifier, navController: NavController) {
     Box(
         modifier = Modifier
             .clickable {
-                SoundManager.playSound()
+                SoundManager.clickSound()
                 navController.navigate(MainMenu)
             }
             .clip(shape = RoundedCornerShape(20.dp))

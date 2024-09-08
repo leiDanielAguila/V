@@ -11,6 +11,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -21,7 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.media3.exoplayer.ExoPlayer
+
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -42,8 +44,8 @@ class MainActivity : ComponentActivity() {
                     NavHost(
                         navController = navController ,
                         startDestination = MainMenu,
-                        enterTransition = { scaleIn(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) },
-                        exitTransition = { scaleOut(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) }
+                        enterTransition = { fadeIn(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) },
+                        exitTransition = { fadeOut(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) }
                     ) {
                         composable<MainMenu> {
                             MainScreen(navController = navController)

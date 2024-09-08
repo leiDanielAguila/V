@@ -1,13 +1,6 @@
 package com.example.v
 
 import android.content.Context
-import android.media.AudioAttributes
-import android.media.MediaPlayer
-import android.media.SoundPool
-import android.media.browse.MediaBrowser
-import android.net.Uri
-import android.provider.MediaStore.Audio.Media
-import androidx.annotation.OptIn
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -29,8 +22,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,10 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.media3.common.MediaItem
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.RawResourceDataSource
-import androidx.media3.exoplayer.ExoPlayer
+
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.v.ui.theme.BackgroundScreenColor
@@ -58,12 +46,6 @@ import com.example.v.ui.theme.VTheme
 import com.example.v.ui.theme.differentBlack
 import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.lighterBrown
-
-
-@OptIn(UnstableApi::class)
-fun getRawResourceUri(context: Context, resId: Int): Uri {
-    return RawResourceDataSource.buildRawResourceUri(resId)
-}
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier, navController : NavController) {
@@ -130,7 +112,7 @@ fun PlayGameButton(
     Box(
         modifier = Modifier
             .clickable {
-                SoundManager.playSound()
+                SoundManager.clickSound()
                 navController.navigate(CategoryScreen)
             }
             .clip(shape = RoundedCornerShape(20.dp))
@@ -163,7 +145,7 @@ fun PlayGameButton(
 fun HowToPLayButton(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
-            .clickable { /*TODO*/ SoundManager.playSound()}
+            .clickable { /*TODO*/ SoundManager.clickSound()}
             .clip(shape = RoundedCornerShape(20.dp))
             .background(differentBlack)
             .size(width = 250.dp, height = 90.dp),
@@ -194,7 +176,7 @@ fun HowToPLayButton(modifier: Modifier = Modifier) {
 fun GiveFeedbackButton(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
-            .clickable { /*TODO*/ SoundManager.playSound() }
+            .clickable { /*TODO*/ SoundManager.clickSound() }
             .clip(shape = RoundedCornerShape(20.dp))
             .background(differentBlack)
             .size(width = 250.dp, height = 90.dp),
@@ -242,7 +224,7 @@ fun SettingsAndSoundButton(
             border = BorderStroke(2.dp, color = Color.Black)
         ) {
             IconButton(
-                onClick = { SoundManager.playSound() },
+                onClick = { SoundManager.clickSound() },
                 modifier = Modifier.size(50.dp)
             ) {
                 Icon(
@@ -260,7 +242,7 @@ fun SettingsAndSoundButton(
         ) {
             IconButton(
                 onClick = {
-                    SoundManager.playSound()
+                    SoundManager.clickSound()
                     onSoundClick = !onSoundClick
                           },
                 modifier = Modifier.size(50.dp)
