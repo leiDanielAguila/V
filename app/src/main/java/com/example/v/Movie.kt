@@ -1,14 +1,13 @@
 package com.example.v
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -17,11 +16,9 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -37,7 +34,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,8 +42,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.v.ui.theme.Lalezar
-import com.example.v.ui.theme.Yellow
-import com.example.v.ui.theme.cream
 import com.example.v.ui.theme.darkRed
 import com.example.v.ui.theme.lightBlue
 import com.example.v.ui.theme.navyBlue
@@ -62,14 +56,14 @@ fun MovieScreen(
 ) {
 
     val movieUiState by movieViewModel.movieUiState.collectAsState()
-    val answerWrong = movieUiState.isAnswerWrong
+
 
     var backgroundColor by remember {
         mutableIntStateOf(1)
     }
 
-    var placeHolder by remember {
-        mutableStateOf("")
+    var isVisible by remember {
+        mutableStateOf(false)
     }
 
     val colorChanger = when(backgroundColor){
@@ -101,7 +95,11 @@ fun MovieScreen(
                     onClickChange -> backgroundColor = onClickChange
                 },
                 navController = navController,
-                movieViewModel = movieViewModel
+                movieViewModel = movieViewModel,
+                isVisible = isVisible,
+                isVisibleChange = {
+                    isVisibleChange -> isVisible = isVisibleChange
+                },
             )
         }// Button Bar Column
 
@@ -179,36 +177,31 @@ fun MovieScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            if (!answerWrong) {
-                Icon(
-                    painterResource(R.drawable.baseline_check_circle_outline_24),
-                    contentDescription = "",
-                    modifier = Modifier.size(62.dp),
-                    tint = Color.Green
-                )
-            } else {
-                Icon(
-                    painterResource(R.drawable.baseline_cancel_24),
-                    contentDescription = "",
-                    modifier = Modifier.size(62.dp),
-                    tint = Color.Red
-                )
-            }
             TextField(
                 value = movieViewModel.userInput,
-                onValueChange = { newInput ->
-                    movieViewModel.updateUserInput(newInput) },
+                onValueChange = {
+                    movieViewModel.updateUserInput(it)
+                                },
                 singleLine = true,
                 keyboardOptions = KeyboardOptions.Default.copy(
                     imeAction = ImeAction.Done
                 ),
                 keyboardActions = KeyboardActions(
-                    onDone = {movieViewModel.ifUserInputCorrect()
+                    onDone = {
+                        movieViewModel.ifUserInputCorrect()
+                        // movieViewModel.resetUserInput()
                     }
                 ),
             )
         }
 
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            HintBox(isVisible = isVisible)
+        }
 
 
     }
@@ -220,6 +213,8 @@ fun ButtonBar(
     movieViewModel: MovieViewModel,
     backgroundColor: Int,
     onBackgroundChange: (Int) -> Unit,
+    isVisible: Boolean,
+    isVisibleChange: (Boolean) -> Unit,
     navController: NavController
 ) {
     Column(
@@ -251,7 +246,7 @@ fun ButtonBar(
                     )
                 } // EXIT
                 IconButton(onClick = {
-                /*TODO*/
+                    isVisibleChange(!isVisible)
                     SoundManager.clickSound()
                 }) {
                     Icon(
@@ -294,6 +289,48 @@ fun ButtonBar(
 }
 
 @Composable
+fun HintBox(isVisible: Boolean) {
+    AnimatedVisibility(
+        visible = isVisible,
+        modifier = Modifier.size(width = 337.dp, height = 601.dp)
+    ) {
+        Box {
+            Image(
+                painterResource(id = R.drawable.hintbook),
+                contentDescription = "",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize()
+            )
+
+            Divider(
+                thickness = 3.dp,
+                color = Color.DarkGray,
+                modifier = Modifier.padding(vertical = 145.dp, horizontal = 55.dp)
+            )
+
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.Top
+            ) {
+                Surface(
+                    color = Color.Transparent,
+                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 50.dp)
+                ) {
+                    Icon(
+                        painterResource(R.drawable.baseline_close_24),
+                        contentDescription = "",
+                        tint = darkRed,
+                        modifier = Modifier.size(54.dp)
+                    )
+                }
+            }
+
+        }
+    }
+}
+
+@Composable
 fun GameTiles() {
     Surface(
         modifier = Modifier
@@ -321,7 +358,7 @@ fun GameTiles() {
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-
+                            // logic for texts
                         }
                     }
                 }
@@ -334,4 +371,10 @@ fun GameTiles() {
 @Composable
 fun MoviePreview() {
     MovieScreen(navController = rememberNavController())
+}
+
+@Preview
+@Composable
+fun hintBoxPreview() {
+    HintBox(isVisible = true)
 }

@@ -10,6 +10,7 @@ object SoundManager {
     private var soundId: Int? = null
     private var wrongId: Int? = null
     private var correctId: Int? = null
+    private var wordUsed: Int? = null
 
     fun initialize(context: Context) {
         soundPool = SoundPool.Builder()
@@ -25,6 +26,7 @@ object SoundManager {
         soundId = soundPool?.load(context, R.raw.click, 1)  // Load your sound here
         correctId = soundPool?.load(context, R.raw.correct, 1)
         wrongId = soundPool?.load(context, R.raw.wrong, 1)
+        wordUsed = soundPool?.load(context, R.raw.word_used, 1)
     }
 
     fun clickSound() {
@@ -42,6 +44,12 @@ object SoundManager {
     fun wrongSound() {
         wrongId?.let { id ->
             soundPool?.play(id, 1f, 1f, 1, 0, 1f)
+        }
+    }
+
+    fun usedWord() {
+        wordUsed?.let {
+            id -> soundPool?.play(id, 1f, 1f, 1, 0, 1f)
         }
     }
 
