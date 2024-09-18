@@ -4,6 +4,7 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -42,6 +43,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.v.ui.theme.Lalezar
+import com.example.v.ui.theme.VTheme
 import com.example.v.ui.theme.darkRed
 import com.example.v.ui.theme.lightBlue
 import com.example.v.ui.theme.navyBlue
@@ -167,7 +169,7 @@ fun MovieScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
-            GameTiles()
+            GameTiles(movieViewModel = movieViewModel)
         }
 
         Column(
@@ -200,10 +202,13 @@ fun MovieScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
-            HintBox(isVisible = isVisible)
+            HintBox(
+                isVisible = isVisible,
+                isVisibleChange = {
+                    isVisibleChange -> isVisible = isVisibleChange
+                }
+            )
         }
-
-
     }
 }
 
@@ -289,7 +294,10 @@ fun ButtonBar(
 }
 
 @Composable
-fun HintBox(isVisible: Boolean) {
+fun HintBox(
+    isVisible: Boolean,
+    isVisibleChange:(Boolean) -> Unit
+) {
     AnimatedVisibility(
         visible = isVisible,
         modifier = Modifier.size(width = 337.dp, height = 601.dp)
@@ -315,7 +323,12 @@ fun HintBox(isVisible: Boolean) {
             ) {
                 Surface(
                     color = Color.Transparent,
-                    modifier = Modifier.padding(horizontal = 18.dp, vertical = 50.dp)
+                    modifier = Modifier
+                        .padding(horizontal = 18.dp, vertical = 50.dp)
+                        .clickable {
+                            SoundManager.clickSound()
+                            isVisibleChange(!isVisible)
+                        }
                 ) {
                     Icon(
                         painterResource(R.drawable.baseline_close_24),
@@ -331,7 +344,9 @@ fun HintBox(isVisible: Boolean) {
 }
 
 @Composable
-fun GameTiles() {
+fun GameTiles(movieViewModel: MovieViewModel) {
+
+    val movieUiState by movieViewModel.movieUiState.collectAsState()
     Surface(
         modifier = Modifier
             .size(width = 300.dp, height = 320.dp),
@@ -358,7 +373,39 @@ fun GameTiles() {
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            // logic for texts
+                            if (1 in movieUiState.keyStorage) {
+                                if (it in upTilesNumber) {
+                                    Text(text = upTilesNumber[it].toString(), color = Color.Black)
+                                }
+                            }
+                            if (2 in movieUiState.keyStorage) {
+                                if (it in frozenTilesNumber) {
+                                    Text(text = frozenTilesNumber[it].toString(), color = Color.Black)
+                                }
+                            }
+                            if (3 in movieUiState.keyStorage) {
+                                if (it in moanaTilesNumber) {
+                                    Text(text = moanaTilesNumber[it].toString(), color = Color.Black)
+                                }
+                            }
+                            if (4 in movieUiState.keyStorage) {
+                                if (it in encantoTilesNumber) {
+                                    Text(text = encantoTilesNumber[it].toString(), color = Color.Black)
+                                }
+                            }
+                            if (5 in movieUiState.keyStorage) {
+                                if (it in mulanTilesNumber) {
+                                    Text(text = mulanTilesNumber[it].toString(), color = Color.Black)
+                                }
+                            }
+                            if (6 in movieUiState.keyStorage) {
+                                if (it in braveTilesNumber) {
+                                    Text(
+                                        text = braveTilesNumber[it].toString(),
+                                        color = Color.Black
+                                    )
+                                }
+                            }
                         }
                     }
                 }
@@ -375,6 +422,10 @@ fun MoviePreview() {
 
 @Preview
 @Composable
-fun hintBoxPreview() {
-    HintBox(isVisible = true)
+fun HintBookPreview() {
+    VTheme {
+        HintBox(isVisible = true) {
+            
+        }
+    }
 }

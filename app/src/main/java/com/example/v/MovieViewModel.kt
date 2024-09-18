@@ -25,17 +25,27 @@ class MovieViewModel: ViewModel() {
     }
 
     private var usedWords: MutableSet<String> = mutableSetOf()
+    private var keyStorage: MutableSet<Int> = mutableSetOf()
+
+
 
     fun ifUserInputCorrect() {
-        if (userInput.lowercase() in movieEasyWords && userInput.lowercase() !in usedWords) {
+        if (
+            userInput.lowercase() in movieEasyWords.values &&
+            userInput.lowercase() !in usedWords
+            )
+        {
             val updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
+
+            keyStorage.add(findKeyPair(userInput))
             usedWords.add(userInput)
             SoundManager.correctSound()
             resetUserInput()
             _movieUiState.update { currentState ->
                 currentState.copy(
                     isAnswerWrong = false,
-                    userScore = updatedScore
+                    userScore = updatedScore,
+                    keyStorage = keyStorage
                 )
             }
         } else if (userInput.lowercase() in usedWords) {
@@ -52,13 +62,23 @@ class MovieViewModel: ViewModel() {
         }
     }
 
+    fun findKeyPair(userInput: String): Int {
+        var keyFound = 0
+        for ((key, value) in movieEasyWords) {
+            if (value == userInput) {
+                keyFound = key
+            }
+        }
+        return keyFound
+    }
+
     fun resetGame() {
         _movieUiState.value = MovieUiState(
             userInput = "",
             userScore = 0,
-            isAnswerWrong = false
+            isAnswerWrong = false,
+            keyStorage = mutableSetOf(),
         )
-
         usedWords.clear()
     }
 }
