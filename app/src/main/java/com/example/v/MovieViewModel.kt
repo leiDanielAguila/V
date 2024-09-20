@@ -2,13 +2,13 @@ package com.example.v
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+
 
 class MovieViewModel: ViewModel() {
 
@@ -25,7 +25,8 @@ class MovieViewModel: ViewModel() {
     }
 
     private var usedWords: MutableSet<String> = mutableSetOf()
-    private var keyStorage: MutableSet<Int> = mutableSetOf()
+    private var wordTileStorage: MutableSet<Int> = mutableSetOf()
+    // private var keyStorage: MutableSet<Int> = mutableSetOf()
 
 
 
@@ -37,7 +38,8 @@ class MovieViewModel: ViewModel() {
         {
             val updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
 
-            keyStorage.add(findKeyPair(userInput))
+            findWord(userInput)
+            //keyStorage.add(findKeyPair(userInput))
             usedWords.add(userInput)
             SoundManager.correctSound()
             resetUserInput()
@@ -45,7 +47,8 @@ class MovieViewModel: ViewModel() {
                 currentState.copy(
                     isAnswerWrong = false,
                     userScore = updatedScore,
-                    keyStorage = keyStorage
+                    wordTileStorage = wordTileStorage
+                    // keyStorage = keyStorage
                 )
             }
         } else if (userInput.lowercase() in usedWords) {
@@ -62,23 +65,33 @@ class MovieViewModel: ViewModel() {
         }
     }
 
-    fun findKeyPair(userInput: String): Int {
-        var keyFound = 0
+    private fun findWord(userInput: String) {
         for ((key, value) in movieEasyWords) {
             if (value == userInput) {
-                keyFound = key
+                wordTileStorage.addAll(key)
             }
         }
-        return keyFound
     }
+
+//    private fun findKeyPair(userInput: String): Int {
+//        var keyFound = 0
+//        for ((key, value) in movieEasyWords) {
+//            if (value == userInput) {
+//                keyFound = key
+//            }
+//        }
+//        return keyFound
+//    }
 
     fun resetGame() {
         _movieUiState.value = MovieUiState(
             userInput = "",
             userScore = 0,
             isAnswerWrong = false,
-            keyStorage = mutableSetOf(),
+            wordTileStorage = mutableSetOf()
+            // keyStorage = mutableSetOf(),
         )
         usedWords.clear()
+        wordTileStorage.clear()
     }
 }

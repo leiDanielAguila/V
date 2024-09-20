@@ -362,7 +362,7 @@ fun GameTiles(movieViewModel: MovieViewModel) {
                 .padding(12.dp)
         ) {
             items(count = boxCountMovie1) {
-                if (it in movieTilesNumber) {
+                if (it in movieEasyTiles.keys) {
                     Surface(
                         modifier = Modifier.size(width = 20.dp, height = 30.dp),
                         color = Color.White,
@@ -373,39 +373,46 @@ fun GameTiles(movieViewModel: MovieViewModel) {
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (1 in movieUiState.keyStorage) {
-                                if (it in upTilesNumber) {
-                                    Text(text = upTilesNumber[it].toString(), color = Color.Black)
-                                }
+
+                            if (it in movieUiState.wordTileStorage) {
+                                Text(
+                                    text = movieEasyTiles[it].toString(),
+                                    color = Color.Black
+                                )
                             }
-                            if (2 in movieUiState.keyStorage) {
-                                if (it in frozenTilesNumber) {
-                                    Text(text = frozenTilesNumber[it].toString(), color = Color.Black)
-                                }
-                            }
-                            if (3 in movieUiState.keyStorage) {
-                                if (it in moanaTilesNumber) {
-                                    Text(text = moanaTilesNumber[it].toString(), color = Color.Black)
-                                }
-                            }
-                            if (4 in movieUiState.keyStorage) {
-                                if (it in encantoTilesNumber) {
-                                    Text(text = encantoTilesNumber[it].toString(), color = Color.Black)
-                                }
-                            }
-                            if (5 in movieUiState.keyStorage) {
-                                if (it in mulanTilesNumber) {
-                                    Text(text = mulanTilesNumber[it].toString(), color = Color.Black)
-                                }
-                            }
-                            if (6 in movieUiState.keyStorage) {
-                                if (it in braveTilesNumber) {
-                                    Text(
-                                        text = braveTilesNumber[it].toString(),
-                                        color = Color.Black
-                                    )
-                                }
-                            }
+//                            if (1 in movieUiState.keyStorage) {
+//                                if (it in upTilesNumber) {
+//                                    Text(text = upTilesNumber[it].toString(), color = Color.Black)
+//                                }
+//                            }
+//                            if (2 in movieUiState.keyStorage) {
+//                                if (it in frozenTilesNumber) {
+//                                    Text(text = frozenTilesNumber[it].toString(), color = Color.Black)
+//                                }
+//                            }
+//                            if (3 in movieUiState.keyStorage) {
+//                                if (it in moanaTilesNumber) {
+//                                    Text(text = moanaTilesNumber[it].toString(), color = Color.Black)
+//                                }
+//                            }
+//                            if (4 in movieUiState.keyStorage) {
+//                                if (it in encantoTilesNumber) {
+//                                    Text(text = encantoTilesNumber[it].toString(), color = Color.Black)
+//                                }
+//                            }
+//                            if (5 in movieUiState.keyStorage) {
+//                                if (it in mulanTilesNumber) {
+//                                    Text(text = mulanTilesNumber[it].toString(), color = Color.Black)
+//                                }
+//                            }
+//                            if (6 in movieUiState.keyStorage) {
+//                                if (it in braveTilesNumber) {
+//                                    Text(
+//                                        text = braveTilesNumber[it].toString(),
+//                                        color = Color.Black
+//                                    )
+//                                }
+//                            }
                         }
                     }
                 }
