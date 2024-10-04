@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
                 Box(modifier = Modifier.background(BackgroundScreenColor)) {
                     NavHost(
                         navController = navController ,
-                        startDestination = MainMenu,
+                        startDestination = MovieEasy, // change when done testing
                         enterTransition = { fadeIn(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) },
                         exitTransition = { fadeOut(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) }
                     ) {

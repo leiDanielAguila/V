@@ -46,6 +46,7 @@ import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.VTheme
 import com.example.v.ui.theme.darkRed
 import com.example.v.ui.theme.lightBlue
+import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.navyBlue
 import com.example.v.ui.theme.onyx
 import com.example.v.ui.theme.pastelGreen
@@ -98,10 +99,6 @@ fun MovieScreen(
                 },
                 navController = navController,
                 movieViewModel = movieViewModel,
-                isVisible = isVisible,
-                isVisibleChange = {
-                    isVisibleChange -> isVisible = isVisibleChange
-                },
             )
         }// Button Bar Column
 
@@ -134,7 +131,7 @@ fun MovieScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 150.dp),
+                .padding(top = 220.dp),
         ) {
             Box(
                 modifier = Modifier
@@ -165,7 +162,9 @@ fun MovieScreen(
         }
 
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 104.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -175,7 +174,7 @@ fun MovieScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 450.dp),
+                .padding(top = 520.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
@@ -191,7 +190,7 @@ fun MovieScreen(
                 keyboardActions = KeyboardActions(
                     onDone = {
                         movieViewModel.ifUserInputCorrect()
-                        // movieViewModel.resetUserInput()
+                        movieViewModel.ifGameFinished()
                     }
                 ),
             )
@@ -200,15 +199,25 @@ fun MovieScreen(
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Center,
         ) {
-            HintBox(
-                isVisible = isVisible,
-                isVisibleChange = {
-                    isVisibleChange -> isVisible = isVisibleChange
+
+            AnimatedVisibility(
+                visible = movieUiState.isGameOver
+            ) {
+                Surface(
+                    modifier = Modifier
+                        .size(width = 303.dp, height = 263.dp),
+                    color = lightGreen,
+                    shape = RoundedCornerShape(15.dp),
+                    border = BorderStroke(3.dp, Color.Black)
+                ) {
+
                 }
-            )
+            }
+
         }
+
     }
 }
 
@@ -218,8 +227,6 @@ fun ButtonBar(
     movieViewModel: MovieViewModel,
     backgroundColor: Int,
     onBackgroundChange: (Int) -> Unit,
-    isVisible: Boolean,
-    isVisibleChange: (Boolean) -> Unit,
     navController: NavController
 ) {
     Column(
@@ -251,7 +258,6 @@ fun ButtonBar(
                     )
                 } // EXIT
                 IconButton(onClick = {
-                    isVisibleChange(!isVisible)
                     SoundManager.clickSound()
                 }) {
                     Icon(
@@ -293,55 +299,55 @@ fun ButtonBar(
     }
 }
 
-@Composable
-fun HintBox(
-    isVisible: Boolean,
-    isVisibleChange:(Boolean) -> Unit
-) {
-    AnimatedVisibility(
-        visible = isVisible,
-        modifier = Modifier.size(width = 337.dp, height = 601.dp)
-    ) {
-        Box {
-            Image(
-                painterResource(id = R.drawable.hintbook),
-                contentDescription = "",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.matchParentSize()
-            )
-
-            Divider(
-                thickness = 3.dp,
-                color = Color.DarkGray,
-                modifier = Modifier.padding(vertical = 145.dp, horizontal = 55.dp)
-            )
-
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.Top
-            ) {
-                Surface(
-                    color = Color.Transparent,
-                    modifier = Modifier
-                        .padding(horizontal = 18.dp, vertical = 50.dp)
-                        .clickable {
-                            SoundManager.clickSound()
-                            isVisibleChange(!isVisible)
-                        }
-                ) {
-                    Icon(
-                        painterResource(R.drawable.baseline_close_24),
-                        contentDescription = "",
-                        tint = darkRed,
-                        modifier = Modifier.size(54.dp)
-                    )
-                }
-            }
-
-        }
-    }
-}
+//@Composable
+//fun HintBox(
+//    isVisible: Boolean,
+//    isVisibleChange:(Boolean) -> Unit
+//) {
+//    AnimatedVisibility(
+//        visible = isVisible,
+//        modifier = Modifier.size(width = 337.dp, height = 601.dp)
+//    ) {
+//        Box {
+//            Image(
+//                painterResource(id = R.drawable.hintbook),
+//                contentDescription = "",
+//                contentScale = ContentScale.Crop,
+//                modifier = Modifier.matchParentSize()
+//            )
+//
+//            Divider(
+//                thickness = 3.dp,
+//                color = Color.DarkGray,
+//                modifier = Modifier.padding(vertical = 145.dp, horizontal = 55.dp)
+//            )
+//
+//            Column(
+//                modifier = Modifier.fillMaxSize(),
+//                horizontalAlignment = Alignment.End,
+//                verticalArrangement = Arrangement.Top
+//            ) {
+//                Surface(
+//                    color = Color.Transparent,
+//                    modifier = Modifier
+//                        .padding(horizontal = 18.dp, vertical = 50.dp)
+//                        .clickable {
+//                            SoundManager.clickSound()
+//                            isVisibleChange(!isVisible)
+//                        }
+//                ) {
+//                    Icon(
+//                        painterResource(R.drawable.baseline_close_24),
+//                        contentDescription = "",
+//                        tint = darkRed,
+//                        modifier = Modifier.size(54.dp)
+//                    )
+//                }
+//            }
+//
+//        }
+//    }
+//}
 
 @Composable
 fun GameTiles(movieViewModel: MovieViewModel) {
@@ -380,39 +386,6 @@ fun GameTiles(movieViewModel: MovieViewModel) {
                                     color = Color.Black
                                 )
                             }
-//                            if (1 in movieUiState.keyStorage) {
-//                                if (it in upTilesNumber) {
-//                                    Text(text = upTilesNumber[it].toString(), color = Color.Black)
-//                                }
-//                            }
-//                            if (2 in movieUiState.keyStorage) {
-//                                if (it in frozenTilesNumber) {
-//                                    Text(text = frozenTilesNumber[it].toString(), color = Color.Black)
-//                                }
-//                            }
-//                            if (3 in movieUiState.keyStorage) {
-//                                if (it in moanaTilesNumber) {
-//                                    Text(text = moanaTilesNumber[it].toString(), color = Color.Black)
-//                                }
-//                            }
-//                            if (4 in movieUiState.keyStorage) {
-//                                if (it in encantoTilesNumber) {
-//                                    Text(text = encantoTilesNumber[it].toString(), color = Color.Black)
-//                                }
-//                            }
-//                            if (5 in movieUiState.keyStorage) {
-//                                if (it in mulanTilesNumber) {
-//                                    Text(text = mulanTilesNumber[it].toString(), color = Color.Black)
-//                                }
-//                            }
-//                            if (6 in movieUiState.keyStorage) {
-//                                if (it in braveTilesNumber) {
-//                                    Text(
-//                                        text = braveTilesNumber[it].toString(),
-//                                        color = Color.Black
-//                                    )
-//                                }
-//                            }
                         }
                     }
                 }
@@ -427,12 +400,3 @@ fun MoviePreview() {
     MovieScreen(navController = rememberNavController())
 }
 
-@Preview
-@Composable
-fun HintBookPreview() {
-    VTheme {
-        HintBox(isVisible = true) {
-            
-        }
-    }
-}

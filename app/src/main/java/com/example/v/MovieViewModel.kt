@@ -18,7 +18,7 @@ class MovieViewModel: ViewModel() {
     var userInput by mutableStateOf("")
 
     fun updateUserInput(input: String) {
-        userInput = input
+        userInput = input.trim()
     }
     private fun resetUserInput() {
         userInput = ""
@@ -36,16 +36,14 @@ class MovieViewModel: ViewModel() {
             userInput.lowercase() !in usedWords
             )
         {
-            val updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
-
-            findWord(userInput)
-            //keyStorage.add(findKeyPair(userInput))
             usedWords.add(userInput)
+            val updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
+            findWord()
             SoundManager.correctSound()
             resetUserInput()
             _movieUiState.update { currentState ->
                 currentState.copy(
-                    isAnswerWrong = false,
+
                     userScore = updatedScore,
                     wordTileStorage = wordTileStorage
                     // keyStorage = keyStorage
@@ -57,37 +55,31 @@ class MovieViewModel: ViewModel() {
         } else {
             SoundManager.wrongSound()
             resetUserInput()
-            _movieUiState.update { currentState ->
-                currentState.copy(
-                    isAnswerWrong = true
-                )
-            }
         }
     }
 
-    private fun findWord(userInput: String) {
+    private fun findWord() {
         for ((key, value) in movieEasyWords) {
-            if (value == userInput) {
+            if (userInput == value) {
                 wordTileStorage.addAll(key)
             }
         }
     }
 
-//    private fun findKeyPair(userInput: String): Int {
-//        var keyFound = 0
-//        for ((key, value) in movieEasyWords) {
-//            if (value == userInput) {
-//                keyFound = key
-//            }
-//        }
-//        return keyFound
-//    }
+    fun ifGameFinished() {
+        if (_movieUiState.value.userScore == 40) {
+            _movieUiState.update { currentState ->
+                currentState.copy(
+                    isGameOver = true
+                )
+            }
+        }
+    }
 
     fun resetGame() {
         _movieUiState.value = MovieUiState(
             userInput = "",
             userScore = 0,
-            isAnswerWrong = false,
             wordTileStorage = mutableSetOf()
             // keyStorage = mutableSetOf(),
         )
