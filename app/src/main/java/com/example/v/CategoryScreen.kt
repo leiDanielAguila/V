@@ -159,8 +159,8 @@ fun TechnologyCard(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(54.dp),
                 tint = Yellow
             )
-        }
-    }
+        } // Row Scope
+    } //Outer Box Scope
 }
 
 @Composable
