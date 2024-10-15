@@ -1,14 +1,16 @@
 package com.example.v
 
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.airbnb.lottie.compose.LottieAnimatable
+import com.airbnb.lottie.compose.rememberLottieAnimatable
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-
 
 class MovieViewModel: ViewModel() {
 
@@ -40,19 +42,21 @@ class MovieViewModel: ViewModel() {
             val updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
             findWord()
             SoundManager.correctSound()
-            resetUserInput()
             _movieUiState.update { currentState ->
                 currentState.copy(
-
                     userScore = updatedScore,
                     wordTileStorage = wordTileStorage
-                    // keyStorage = keyStorage
                 )
             }
+            resetUserInput()
         } else if (userInput.lowercase() in usedWords) {
             SoundManager.usedWord()
             resetUserInput()
-        } else {
+
+        } else if(userInput.isBlank()) {
+            resetUserInput()
+        }
+        else {
             SoundManager.wrongSound()
             resetUserInput()
         }

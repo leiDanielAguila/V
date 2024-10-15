@@ -159,8 +159,8 @@ fun TechnologyCard(modifier: Modifier = Modifier) {
                 modifier = Modifier.size(54.dp),
                 tint = Yellow
             )
-        }
-    }
+        } // ROW ENDING - TECHNOLOGY CARD
+    } // BOX ENDING - TECHNOLOGY CARD
 }
 
 @Composable

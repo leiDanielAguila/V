@@ -38,3 +38,7 @@ val Typography = Typography(
 val Lalezar = FontFamily(
     Font(R.font.lalezar_regular, FontWeight.Normal),
 )
+
+val Spenbeb = FontFamily(
+    Font(R.font.spenbeb, FontWeight.Normal),
+)
