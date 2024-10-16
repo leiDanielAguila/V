@@ -1,6 +1,15 @@
 package com.example.v
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateSizeAsState
+import androidx.compose.animation.core.animateValue
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -53,11 +62,13 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.VTheme
 import com.example.v.ui.theme.darkGreen
 import com.example.v.ui.theme.darkRed
+import com.example.v.ui.theme.heartRed
 import com.example.v.ui.theme.lightBlue
 import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.navyBlue
@@ -151,7 +162,7 @@ fun MovieScreen(
             modifier = Modifier.fillMaxSize().padding(top = 230.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            UserLives()
+            UserLives(movieUiState = movieUiState)
         } // GAME USER LIFE
 
         Column( // MOVIE DIFFICULTY CARD DISPLAY ONLY
@@ -573,33 +584,108 @@ fun HintNotes(
 }
 
 @Composable
-fun UserLives(modifier: Modifier = Modifier) {
+fun UserLives(
+    modifier: Modifier = Modifier,
+    movieUiState: MovieUiState
+) {
+
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+
+    
+    val heartSize by infiniteTransition.animateValue(
+        initialValue = 30.dp,
+        targetValue = 43.dp,
+        typeConverter = Dp.VectorConverter,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 700,
+                easing = FastOutSlowInEasing
+            ),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+
     Box(
         modifier
-            .size(width = 119.dp, height = 42.dp)
+            .size(width = 150.dp, height = 62.dp)
             .background(darkGreen)
-            .border(1.dp, Color.Black)
+            .border(3.dp, Color.Black)
     ) {
         Row(
             modifier = Modifier.matchParentSize(),
             horizontalArrangement = Arrangement.SpaceEvenly,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painterResource(R.drawable.heart),
-                contentDescription = "User life",
-                modifier = Modifier.size(33.dp)
-            )
-            Image(
-                painterResource(R.drawable.heart),
-                contentDescription = "User life",
-                modifier = Modifier.size(33.dp)
-            )
-            Image(
-                painterResource(R.drawable.heart),
-                contentDescription = "User life",
-                modifier = Modifier.size(33.dp)
-            )
+            when (movieUiState.gameLives) {
+                3 -> {
+                    Image(
+                        painterResource(R.drawable.heart),
+                        contentDescription = "User life",
+                        modifier = Modifier.size(heartSize),
+                    )
+                    Image(
+                        painterResource(R.drawable.heart),
+                        contentDescription = "User life",
+                        modifier = Modifier.size(heartSize),
+                    )
+                    Image(
+                        painterResource(R.drawable.heart),
+                        contentDescription = "User life",
+                        modifier = Modifier.size(heartSize),
+                    )
+                }
+                2 -> {
+                    Icon(
+                        painterResource(R.drawable.baseline_heart_broken_24),
+                        contentDescription = "Broken heart",
+                        tint = heartRed
+                    )
+                    Image(
+                        painterResource(R.drawable.heart),
+                        contentDescription = "User life",
+                        modifier = Modifier.size(heartSize),
+                    )
+                    Image(
+                        painterResource(R.drawable.heart),
+                        contentDescription = "User life",
+                        modifier = Modifier.size(heartSize),
+                    )
+                }
+                1 -> {
+                    Icon(
+                        painterResource(R.drawable.baseline_heart_broken_24),
+                        contentDescription = "Broken heart",
+                        tint = heartRed
+                    )
+                    Icon(
+                        painterResource(R.drawable.baseline_heart_broken_24),
+                        contentDescription = "Broken heart",
+                        tint = heartRed
+                    )
+                    Image(
+                        painterResource(R.drawable.heart),
+                        contentDescription = "User life",
+                        modifier = Modifier.size(heartSize),
+                    )
+                }
+                else -> {
+                    Icon(
+                        painterResource(R.drawable.baseline_heart_broken_24),
+                        contentDescription = "Broken heart",
+                        tint = heartRed
+                    )
+                    Icon(
+                        painterResource(R.drawable.baseline_heart_broken_24),
+                        contentDescription = "Broken heart",
+                        tint = heartRed
+                    )
+                    Icon(
+                        painterResource(R.drawable.baseline_heart_broken_24),
+                        contentDescription = "Broken heart",
+                        tint = heartRed
+                    )
+                }
+            }
         }
     }
 }
@@ -614,7 +700,7 @@ fun MoviePreview() {
 @Composable
 fun UserLivesPreview() {
     VTheme {
-        UserLives()
+        UserLives(movieUiState = MovieUiState())
     }
 }
 

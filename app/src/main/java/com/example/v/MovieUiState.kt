@@ -7,6 +7,7 @@ data class MovieUiState (
     var wordTileStorage: MutableSet<Int> = mutableSetOf(),
     var isGameOver: Boolean = false,
     var isCorrect: Boolean = false,
+    var gameLives: Int = 3
 )
 
 

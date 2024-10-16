@@ -18,6 +18,7 @@ val Yellow = Color(0xFFfdfd00)
 
 val navyBlue = Color(0xFF1e3a40)
 val darkRed = Color(0xFF8d3737)
+val heartRed = Color(0xFFD7443E)
 val lightBlue = Color(0xFF4d9cab)
 
 val onyx = Color(0xFF353935)

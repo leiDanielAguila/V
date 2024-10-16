@@ -101,6 +101,7 @@ open class MovieEasyViewModel: ViewModel() {
         else {
             SoundManager.wrongSound()
             resetUserInput()
+            removeOneLife()
         }
     }
 
@@ -109,6 +110,15 @@ open class MovieEasyViewModel: ViewModel() {
             if (userInput == value) {
                 wordTileStorage.addAll(key)
             }
+        }
+    }
+
+    private fun removeOneLife() {
+        _movieUiState.update { currentState ->
+            currentState.copy(
+                gameLives = currentState.gameLives - 1,
+                isCorrect = false
+            )
         }
     }
 
