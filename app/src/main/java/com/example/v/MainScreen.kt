@@ -97,7 +97,7 @@ fun MainScreen(modifier: Modifier = Modifier, navController : NavController) {
             Spacer(modifier = Modifier.padding(8.dp))
             HowToPLayButton()
             Spacer(modifier = Modifier.padding(8.dp))
-            GiveFeedbackButton()
+//            GiveFeedbackButton()
         } // Column Scope
     }
 }
@@ -172,36 +172,36 @@ fun HowToPLayButton(modifier: Modifier = Modifier) {
     } // Outer Box Scope
 }
 
-@Composable
-fun GiveFeedbackButton(modifier: Modifier = Modifier) {
-    Box(
-        modifier = Modifier
-            .clickable { /*TODO*/ SoundManager.clickSound() }
-            .clip(shape = RoundedCornerShape(20.dp))
-            .background(differentBlack)
-            .size(width = 250.dp, height = 90.dp),
-    ) {
-        Box(
-            modifier = Modifier
-                .clip(shape = RoundedCornerShape(15.dp))
-                .background(lightRed)
-                .size(width = 235.dp, height = 70.dp)
-                .align(AbsoluteAlignment.TopRight),
-        ) {
-            Column(
-                modifier = Modifier.matchParentSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Text(
-                    "Give Feedback",
-                    fontSize = 38.sp,
-                    fontFamily = Lalezar
-                )
-            } // Text Column Scope
-        } // Inner Box Scope
-    } // Outer Box Scope
-}
+//@Composable
+//fun GiveFeedbackButton(modifier: Modifier = Modifier) {
+//    Box(
+//        modifier = Modifier
+//            .clickable { /*TODO*/ SoundManager.clickSound() }
+//            .clip(shape = RoundedCornerShape(20.dp))
+//            .background(differentBlack)
+//            .size(width = 250.dp, height = 90.dp),
+//    ) {
+//        Box(
+//            modifier = Modifier
+//                .clip(shape = RoundedCornerShape(15.dp))
+//                .background(lightRed)
+//                .size(width = 235.dp, height = 70.dp)
+//                .align(AbsoluteAlignment.TopRight),
+//        ) {
+//            Column(
+//                modifier = Modifier.matchParentSize(),
+//                horizontalAlignment = Alignment.CenterHorizontally,
+//                verticalArrangement = Arrangement.Center
+//            ) {
+//                Text(
+//                    "Give Feedback",
+//                    fontSize = 38.sp,
+//                    fontFamily = Lalezar
+//                )
+//            } // Text Column Scope
+//        } // Inner Box Scope
+//    } // Outer Box Scope
+//}
 
 @Composable
 fun SettingsAndSoundButton(

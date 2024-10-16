@@ -22,6 +22,9 @@ val lightBlue = Color(0xFF4d9cab)
 
 val onyx = Color(0xFF353935)
 val cream = Color(0xFFFAF9F6)
+val anotherWhite = Color(0xFFFFF8DC)
 val pastelGreen = Color(0xFFC1E1C1)
 
 val lightGreen = Color(0xFF5BB432)
+val darkGreen = Color(0xFF106C1B)
+val darkYellow = Color(0xFFFDDA0D)

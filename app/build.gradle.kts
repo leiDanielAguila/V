@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
+    id("kotlin-kapt")
 }
 
 android {
@@ -75,5 +76,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
+
+
+    implementation("androidx.room:room-ktx:2.6.1")
 
 }

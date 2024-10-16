@@ -4,35 +4,26 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.draggable
-import androidx.compose.foundation.gestures.rememberDraggableState
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyHorizontalGrid
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.Divider
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -46,6 +37,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -57,18 +49,14 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.animateLottieCompositionAsState
-import com.airbnb.lottie.compose.rememberLottieAnimatable
 import com.airbnb.lottie.compose.rememberLottieComposition
-import androidx.compose.material3.TextField
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.VTheme
+import com.example.v.ui.theme.darkGreen
 import com.example.v.ui.theme.darkRed
 import com.example.v.ui.theme.lightBlue
 import com.example.v.ui.theme.lightGreen
@@ -76,14 +64,13 @@ import com.example.v.ui.theme.navyBlue
 import com.example.v.ui.theme.onyx
 import com.example.v.ui.theme.pastelGreen
 import kotlinx.coroutines.delay
-import kotlin.math.roundToInt
 
 // Main screen for Movie easy difficulty
 @Composable
 fun MovieScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    movieViewModel: MovieViewModel = viewModel()
+    movieViewModel: MovieEasyViewModel = viewModel()
 ) {
 
     val movieUiState by movieViewModel.movieUiState.collectAsState() // connects to app logic
@@ -91,11 +78,11 @@ fun MovieScreen(
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
     val correct by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.correctword))
     
-    val correctProgress by animateLottieCompositionAsState(
-        composition = correct,
-        speed = 0.7F,
-        iterations = 1,
-    )
+//    val correctProgress by animateLottieCompositionAsState(
+//        composition = correct,
+//        speed = 0.7F,
+//        iterations = 1,
+//    )
 
     var isHintVisible by remember { // boolean for hint note
         mutableStateOf(false)
@@ -160,6 +147,13 @@ fun MovieScreen(
             )
         } // MOVIE CARD DISPLAY ONLY
 
+        Column(
+            modifier = Modifier.fillMaxSize().padding(top = 230.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            UserLives()
+        } // GAME USER LIFE
+
         Column( // MOVIE DIFFICULTY CARD DISPLAY ONLY
             modifier = Modifier
                 .fillMaxSize(),
@@ -176,7 +170,7 @@ fun MovieScreen(
         Column( // SCORE CARD
             modifier = Modifier
                 .fillMaxSize()
-                .padding(top = 220.dp),
+                .padding(top = 110.dp),
         ) {
             Box(
                 modifier = Modifier
@@ -241,7 +235,7 @@ fun MovieScreen(
                 ),
                 label = {Text(text = "Enter Guess here")},
                 leadingIcon = {
-                    Icon(imageVector = Icons.Default.Send, contentDescription = "", tint = Color.LightGray)
+                    Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "", tint = Color.LightGray)
                 }
 
             )
@@ -306,7 +300,7 @@ fun MovieScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top,
         ) {
-            HintNotes(isHintVisible = isHintVisible)
+            HintNotes(isHintVisible = isHintVisible, movieViewModel = movieViewModel)
         } // HINT NOTES
 
     }
@@ -315,7 +309,7 @@ fun MovieScreen(
 @Composable
 fun ButtonBar(
     modifier: Modifier = Modifier,
-    movieViewModel: MovieViewModel,
+    movieViewModel: MovieEasyViewModel,
     backgroundColor: Int,
     onBackgroundChange: (Int) -> Unit,
     isHintVisible: Boolean,
@@ -444,14 +438,14 @@ fun ButtonBar(
 //}
 
 @Composable
-fun GameTiles(movieViewModel: MovieViewModel) {
+fun GameTiles(movieViewModel: MovieEasyViewModel) {
 
     val movieUiState by movieViewModel.movieUiState.collectAsState()
     Surface(
         modifier = Modifier
-            .size(width = 320.dp, height = 350.dp),
+            .size(width = 330.dp, height = 360.dp),
         color = onyx,
-        shape = RoundedCornerShape(15.dp)
+        shape = RoundedCornerShape(10.dp)
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(9),
@@ -461,12 +455,13 @@ fun GameTiles(movieViewModel: MovieViewModel) {
                 .fillMaxSize()
                 .padding(12.dp)
         ) {
-            items(count = boxCountMovie1) {
-                if (it in movieEasyTiles.keys) { // for words
+            items(count = movieViewModel.boxCountMovie1) {
+                if (it in movieViewModel.movieEasyTiles.keys) { // for words
                     Surface(
                         modifier = Modifier.size(width = 20.dp, height = 30.dp),
                         color = Color.White,
-                        shape = RoundedCornerShape(3.dp)
+                        shape = RoundedCornerShape(5.dp),
+                        border = BorderStroke(2.dp, Color.Black)
                     ) {
                         Row(
                             modifier = Modifier.fillMaxSize(),
@@ -476,7 +471,7 @@ fun GameTiles(movieViewModel: MovieViewModel) {
 
                             if (it in movieUiState.wordTileStorage) {
                                 Text(
-                                    text = movieEasyTiles[it].toString(),
+                                    text = movieViewModel.movieEasyTiles[it].toString(),
                                     color = Color.Black,
                                     fontFamily = Spenbeb
                                 )
@@ -486,7 +481,7 @@ fun GameTiles(movieViewModel: MovieViewModel) {
                 } // for words
 
 
-                if (it in numberingSystem.keys) { // for numbers
+                if (it in movieViewModel.numberingSystem.keys) { // for numbers
                     Surface(
                         modifier = Modifier.size(width = 20.dp, height = 30.dp),
                         color = Color.Transparent,
@@ -498,10 +493,10 @@ fun GameTiles(movieViewModel: MovieViewModel) {
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = numberingSystem[it].toString(),
+                                text = movieViewModel.numberingSystem[it].toString(),
                                 color = Color.White,
                                 fontSize = 27.sp,
-                                fontFamily = Spenbeb
+                                fontFamily = Spenbeb,
                             )
                         }
                     }
@@ -513,10 +508,9 @@ fun GameTiles(movieViewModel: MovieViewModel) {
 
 @Composable
 fun HintNotes(
-    modifier: Modifier = Modifier,
+    movieViewModel: MovieEasyViewModel,
     isHintVisible: Boolean
 ) {
-
     val lazyListState = rememberLazyListState()
     val snapBehavior = rememberSnapFlingBehavior(lazyListState = lazyListState)
     AnimatedVisibility(
@@ -531,7 +525,7 @@ fun HintNotes(
             horizontalArrangement = Arrangement.spacedBy(6.dp),
             flingBehavior = snapBehavior
         ) {
-            items(count = easyMovieHintCount) {
+            items(count = movieViewModel.easyMovieHintCount) {
                 Box(
                     modifier = Modifier
                         .size(width = 270.dp, height = 254.dp)
@@ -548,26 +542,64 @@ fun HintNotes(
                             .fillMaxSize()
                             .padding(horizontal = 30.dp, vertical = 70.dp),
                     ) {
-                        Text(
-                            text = "#2",
-                            fontSize = 18.sp,
-                            fontFamily = Spenbeb
-                        )
-                    }
+                        if (it in movieViewModel.movieEasyHint.keys) {
+                            Text(
+                                text = "#".plus(it+1),
+                                fontSize = 18.sp,
+                                fontFamily = Spenbeb,
+                            )
+                        }
+                    } // for number
 
                     Column(
                         modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
-                        Text(
-                            text = "A magical ice queen",
-                            fontSize = 18.sp,
-                            fontFamily = Lalezar
-                        )
-                    }
+                        if (it in movieViewModel.movieEasyHint.keys) {
+                            movieViewModel.movieEasyHint[it]?.let { it1 ->
+                                Text(
+                                    text = it1,
+                                    fontSize = 18.sp,
+                                    fontFamily = Lalezar
+                                )
+                            }
+                        }
+                    } // for the description
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun UserLives(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .size(width = 119.dp, height = 42.dp)
+            .background(darkGreen)
+            .border(1.dp, Color.Black)
+    ) {
+        Row(
+            modifier = Modifier.matchParentSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Image(
+                painterResource(R.drawable.heart),
+                contentDescription = "User life",
+                modifier = Modifier.size(33.dp)
+            )
+            Image(
+                painterResource(R.drawable.heart),
+                contentDescription = "User life",
+                modifier = Modifier.size(33.dp)
+            )
+            Image(
+                painterResource(R.drawable.heart),
+                contentDescription = "User life",
+                modifier = Modifier.size(33.dp)
+            )
         }
     }
 }
@@ -580,9 +612,19 @@ fun MoviePreview() {
 
 @Preview(showBackground = true)
 @Composable
-fun HintNotePreview() {
+fun UserLivesPreview() {
     VTheme {
-        HintNotes(isHintVisible = true)
+        UserLives()
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun HintNotePreview() {
+    VTheme {
+        HintNotes(isHintVisible = true, movieViewModel = MovieEasyViewModel())
+    }
+}
+
+
 
