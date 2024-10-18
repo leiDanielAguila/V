@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-open class MovieEasyViewModel: ViewModel() {
+class MovieEasyViewModel: ViewModel() {
 
     private val _movieUiState = MutableStateFlow(MovieUiState())
-    open val movieUiState: StateFlow<MovieUiState> = _movieUiState.asStateFlow()
+    val movieUiState: StateFlow<MovieUiState> = _movieUiState.asStateFlow()
 
     internal val boxCountMovie1 = 81 //  change to 81 game box dimensions
     internal val easyMovieHintCount = 4 // hint notes count
@@ -22,7 +22,7 @@ open class MovieEasyViewModel: ViewModel() {
     private var usedWords: MutableSet<String> = mutableSetOf()
     private var wordTileStorage: MutableSet<Int> = mutableSetOf()
 
-    open var userInput by mutableStateOf("")
+    var userInput by mutableStateOf("")
 
     val movieEasyTiles =
         mapOf(
@@ -86,8 +86,7 @@ open class MovieEasyViewModel: ViewModel() {
     }
 
     fun ifUserInputCorrect() {
-        if (userInput in movieEasyWords.values && userInput !in usedWords)
-        {
+        if (userInput in movieEasyWords.values && userInput !in usedWords) {
             updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
             usedWords.add(userInput)
             findWord()
@@ -97,8 +96,7 @@ open class MovieEasyViewModel: ViewModel() {
         } else if (userInput in usedWords || userInput.isBlank()) {
             SoundManager.usedWord()
             resetUserInput()
-        }
-        else {
+        } else {
             SoundManager.wrongSound()
             resetUserInput()
             removeOneLife()
@@ -135,7 +133,13 @@ open class MovieEasyViewModel: ViewModel() {
         if (_movieUiState.value.userScore == 40) {
             _movieUiState.update { currentState ->
                 currentState.copy(
-                    isGameOver = true
+                    isGameOverAndWin = true
+                )
+            }
+        } else if (_movieUiState.value.isGameOverAndLose) {
+            _movieUiState.update { currentState ->
+                currentState.copy(
+                    isGameOverAndLose = true
                 )
             }
         }

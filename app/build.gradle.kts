@@ -77,7 +77,5 @@ dependencies {
 
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1")
 
-
-    implementation("androidx.room:room-ktx:2.6.1")
-
+    implementation("io.realm.kotlin:library-base:1.11.0")
 }

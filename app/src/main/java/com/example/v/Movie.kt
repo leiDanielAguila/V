@@ -260,7 +260,7 @@ fun MovieScreen(
         ) {
 
             AnimatedVisibility(
-                visible = movieUiState.isGameOver
+                visible = movieUiState.isGameOverAndWin
             ) {
 
                 Surface(
@@ -278,7 +278,7 @@ fun MovieScreen(
         Column( // LOTTIE ANIMATION
             modifier = Modifier.fillMaxSize()
         ) {
-            if (movieUiState.isGameOver) {
+            if (movieUiState.isGameOverAndWin) {
                 SoundManager.win()
                 LottieAnimation(composition = confetti, iterations = 5)
             }
@@ -313,6 +313,22 @@ fun MovieScreen(
         ) {
             HintNotes(isHintVisible = isHintVisible, movieViewModel = movieViewModel)
         } // HINT NOTES
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            AnimatedVisibility(
+                visible = movieUiState.isGameOverAndLose
+            ) {
+                Box(
+                    modifier = Modifier
+                ) {
+
+                }
+            }
+        }
 
     }
 }
@@ -359,13 +375,23 @@ fun ButtonBar(
                     isHintVisibleChange(!isHintVisible)
                     SoundManager.clickSound()
                 }) {
-                    Icon(
-                        painterResource(R.drawable.baseline_menu_book_24),
-                        contentDescription = "",
-                        tint = onyx,
-                        modifier = Modifier.size(32.dp)
+                    if (isHintVisible) {
+                        Icon(
+                            painterResource(R.drawable.baseline_menu_book_24),
+                            contentDescription = "",
+                            tint = Color.Yellow,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    } else {
+                        Icon(
+                            painterResource(R.drawable.baseline_menu_book_24),
+                            contentDescription = "",
+                            tint = onyx,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
 
-                    )
+
                 } // HINT BOOK
                 IconButton(onClick = { // FUTURE IN GAME MENU
                 /*TODO*/
