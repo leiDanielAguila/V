@@ -71,10 +71,10 @@ class MovieEasyViewModel: ViewModel() {
     )
 
     val movieEasyHint = mapOf(
-        0 to "A scottish princess",
-        1 to "A magical ice queen",
-        2 to "A family with superpowers",
-        3 to "journey across the ocean"
+        0 to "Disney movie about a scottish archer",
+        1 to "Disney movie about a magical ice queen",
+        2 to "A colombian family with superpowers",
+        3 to "Journey across the ocean to save their island"
     )
 
     fun updateUserInput(input: String) {
@@ -136,7 +136,7 @@ class MovieEasyViewModel: ViewModel() {
                     isGameOverAndWin = true
                 )
             }
-        } else if (_movieUiState.value.isGameOverAndLose) {
+        } else if (_movieUiState.value.gameLives == 0) {
             _movieUiState.update { currentState ->
                 currentState.copy(
                     isGameOverAndLose = true

@@ -5,27 +5,22 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.ButtonElevation
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -42,10 +37,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
-import com.example.v.ui.theme.VTheme
 import com.example.v.ui.theme.Yellow
 import com.example.v.ui.theme.anotherWhite
 import com.example.v.ui.theme.darkRed
@@ -163,18 +161,53 @@ fun MovieCard(
     }
 }
 
+
 @Composable
-fun TechnologyCard(modifier: Modifier = Modifier) {
+fun TechnologyCard() {
+
+    val lock by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lock))
+
+    var isPlaying by remember {mutableStateOf(false)}
+
+    val progress by animateLottieCompositionAsState(
+        composition = lock,
+        isPlaying = isPlaying
+    )
+
+    LaunchedEffect(key1 = progress) {
+        if (progress == 0f) {
+            isPlaying = true
+        }
+        if (progress == 1f) {
+            isPlaying = false
+        }
+    }
+
     Box(
         modifier = Modifier
-            .clickable { /* TODO */ }
+            .clickable {
+                isPlaying = true
+            }
             .size(width = 294.dp, height = 140.dp)
     ) {
+
         Image(
             painterResource(id = R.drawable.tech_card),
             contentDescription = "Movie Card",
             modifier = Modifier.matchParentSize()
         )
+
+        Column(
+            modifier = Modifier.matchParentSize(),
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.Center
+        ){
+            LottieAnimation(
+                composition = lock,
+               // iterations = Int.MAX_VALUE
+                progress = {progress}
+            )
+        }
         Row(
             modifier = Modifier
                 .fillMaxSize(),
@@ -184,19 +217,19 @@ fun TechnologyCard(modifier: Modifier = Modifier) {
                 painterResource(R.drawable.baseline_star_24),
                 contentDescription = "Star",
                 modifier = Modifier.size(54.dp),
-                tint = Yellow
+                tint = Color.DarkGray
             )
             Icon(
                 painterResource(R.drawable.baseline_star_24),
                 contentDescription = "Star",
                 modifier = Modifier.size(54.dp),
-                tint = Yellow
+                tint = Color.DarkGray
             )
             Icon(
                 painterResource(R.drawable.baseline_star_24),
                 contentDescription = "Star",
                 modifier = Modifier.size(54.dp),
-                tint = Yellow
+                tint = Color.DarkGray
             )
         } // ROW ENDING - TECHNOLOGY CARD
     } // BOX ENDING - TECHNOLOGY CARD

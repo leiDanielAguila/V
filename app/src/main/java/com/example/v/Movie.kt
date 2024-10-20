@@ -2,14 +2,16 @@ package com.example.v
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.VectorConverter
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.animateSizeAsState
 import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,6 +22,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -31,10 +34,13 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -46,7 +52,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -60,6 +65,7 @@ import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -68,9 +74,11 @@ import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.VTheme
 import com.example.v.ui.theme.darkGreen
 import com.example.v.ui.theme.darkRed
+import com.example.v.ui.theme.darkYellow
 import com.example.v.ui.theme.heartRed
 import com.example.v.ui.theme.lightBlue
 import com.example.v.ui.theme.lightGreen
+import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.navyBlue
 import com.example.v.ui.theme.onyx
 import com.example.v.ui.theme.pastelGreen
@@ -87,7 +95,7 @@ fun MovieScreen(
     val movieUiState by movieViewModel.movieUiState.collectAsState() // connects to app logic
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
-    val correct by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.correctword))
+    //val correct by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.correctword))
     
 //    val correctProgress by animateLottieCompositionAsState(
 //        composition = correct,
@@ -100,7 +108,7 @@ fun MovieScreen(
     }
 
     var backgroundColor by remember { // value for background color
-        mutableIntStateOf(1)
+        mutableIntStateOf(2)
     }
 
     var isCorrectVisible by remember { // TBA
@@ -159,7 +167,9 @@ fun MovieScreen(
         } // MOVIE CARD DISPLAY ONLY
 
         Column(
-            modifier = Modifier.fillMaxSize().padding(top = 230.dp),
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(top = 230.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             UserLives(movieUiState = movieUiState)
@@ -253,34 +263,25 @@ fun MovieScreen(
         } // USER INPUT FIELD
 
         
-        Column( // DISPLAY WHEN GAME OVER
+        Column( // DISPLAY WHEN GAME OVER AND WIN
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
 
             AnimatedVisibility(
-                visible = movieUiState.isGameOverAndWin
+                visible = movieUiState.isGameOverAndWin,
             ) {
-
-                Surface(
-                    modifier = Modifier
-                        .size(width = 303.dp, height = 263.dp),
-                    color = lightGreen,
-                    shape = RoundedCornerShape(15.dp),
-                    border = BorderStroke(3.dp, Color.Black)
-                ) {
-
-                }
+                LevelComplete(movieViewModel = movieViewModel)
             }
-        } // DISPLAY WHEN GAME OVER
+        } // DISPLAY WHEN GAME OVER AND WIN
 
         Column( // LOTTIE ANIMATION
             modifier = Modifier.fillMaxSize()
         ) {
             if (movieUiState.isGameOverAndWin) {
                 SoundManager.win()
-                LottieAnimation(composition = confetti, iterations = 5)
+                LottieAnimation(composition = confetti, iterations = 10)
             }
         } // lottie animation for game ends
 
@@ -314,7 +315,7 @@ fun MovieScreen(
             HintNotes(isHintVisible = isHintVisible, movieViewModel = movieViewModel)
         } // HINT NOTES
 
-        Column(
+        Column( // game over and lose
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
@@ -323,12 +324,12 @@ fun MovieScreen(
                 visible = movieUiState.isGameOverAndLose
             ) {
                 Box(
-                    modifier = Modifier
+                    modifier = Modifier.fillMaxSize()
                 ) {
-
+                    LevelFailed(movieViewModel = movieViewModel, navController = navController)
                 }
             }
-        }
+        } //  game over and lose
 
     }
 }
@@ -424,55 +425,141 @@ fun ButtonBar(
     }
 }
 
-//@Composable
-//fun HintBox(
-//    isVisible: Boolean,
-//    isVisibleChange:(Boolean) -> Unit
-//) {
-//    AnimatedVisibility(
-//        visible = isVisible,
-//        modifier = Modifier.size(width = 337.dp, height = 601.dp)
-//    ) {
-//        Box {
-//            Image(
-//                painterResource(id = R.drawable.hintbook),
-//                contentDescription = "",
-//                contentScale = ContentScale.Crop,
-//                modifier = Modifier.matchParentSize()
-//            )
-//
-//            Divider(
-//                thickness = 3.dp,
-//                color = Color.DarkGray,
-//                modifier = Modifier.padding(vertical = 145.dp, horizontal = 55.dp)
-//            )
-//
-//            Column(
-//                modifier = Modifier.fillMaxSize(),
-//                horizontalAlignment = Alignment.End,
-//                verticalArrangement = Arrangement.Top
-//            ) {
-//                Surface(
-//                    color = Color.Transparent,
-//                    modifier = Modifier
-//                        .padding(horizontal = 18.dp, vertical = 50.dp)
-//                        .clickable {
-//                            SoundManager.clickSound()
-//                            isVisibleChange(!isVisible)
-//                        }
-//                ) {
-//                    Icon(
-//                        painterResource(R.drawable.baseline_close_24),
-//                        contentDescription = "",
-//                        tint = darkRed,
-//                        modifier = Modifier.size(54.dp)
-//                    )
-//                }
-//            }
-//
-//        }
-//    }
-//}
+@Composable
+fun LevelComplete(
+    modifier: Modifier = Modifier,
+    movieViewModel: MovieEasyViewModel
+) {
+    Surface(
+        modifier.fillMaxSize(),
+        color = Color(0xFFF8DE7E),
+        shape = RoundedCornerShape(15.dp),
+        border = BorderStroke(3.dp, Color.Black)
+    ) {
+        Column(
+            modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Level Complete!",
+                fontSize = 52.sp,
+                fontFamily = Lalezar,
+                color = Color(0xFFF5F5F5),
+                fontWeight = FontWeight.Bold,
+            )
+
+            Row(
+                modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(
+                    onClick = {
+                        movieViewModel.resetGame()
+                        SoundManager.clickSound()
+                    },
+                ) {
+                    Text(
+                        "Repeat level",
+                        fontSize = 18.sp,
+                        fontFamily = Spenbeb,
+                        color = darkRed,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Icon(
+                        painterResource(R.drawable.baseline_repeat_24),
+                        contentDescription = "",
+                        tint = darkRed,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+
+                TextButton(
+                    onClick = {},
+                    ) {
+                    Text(
+                        "Next level",
+                        fontSize = 18.sp,
+                        fontFamily = Spenbeb,
+                        color = lightGreen,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun LevelFailed(
+    modifier: Modifier = Modifier,
+    movieViewModel: MovieEasyViewModel,
+    navController: NavController
+) {
+    Surface(
+        modifier.fillMaxSize(),
+        color = Color.DarkGray,
+        shape = RoundedCornerShape(15.dp),
+        border = BorderStroke(3.dp, Color.Black)
+    ) {
+        Column(
+            modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = "Level Failed!",
+                fontSize = 52.sp,
+                fontFamily = Lalezar,
+                color = Color(0xFFF5F5F5),
+                fontWeight = FontWeight.Bold,
+            )
+
+            Row(
+                modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextButton(
+                    onClick = {
+                        movieViewModel.resetGame()
+                        SoundManager.clickSound()
+                    },
+                ) {
+                    Text(
+                        "Try Again?",
+                        fontSize = 18.sp,
+                        fontFamily = Spenbeb,
+                        color = lightGreen,
+                        fontWeight = FontWeight.Bold,
+                    )
+                    Icon(
+                        painterResource(R.drawable.baseline_replay_24),
+                        contentDescription = "",
+                        tint = lightGreen,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+                TextButton(
+                    onClick = {
+                        navController.navigate(MainMenu)
+                        SoundManager.clickSound()
+                    },
+                ) {
+                    Text(
+                        "Exit to Menu?",
+                        fontSize = 18.sp,
+                        fontFamily = Spenbeb,
+                        color = Color.Red,
+                        fontWeight = FontWeight.Bold,
+                    )
+
+                }
+            }
+        }
+    }
+}
 
 @Composable
 fun GameTiles(movieViewModel: MovieEasyViewModel) {
@@ -584,6 +671,7 @@ fun HintNotes(
                                 text = "#".plus(it+1),
                                 fontSize = 18.sp,
                                 fontFamily = Spenbeb,
+                                color = onyx
                             )
                         }
                     } // for number
@@ -597,8 +685,9 @@ fun HintNotes(
                             movieViewModel.movieEasyHint[it]?.let { it1 ->
                                 Text(
                                     text = it1,
-                                    fontSize = 18.sp,
-                                    fontFamily = Lalezar
+                                    fontSize = 22.sp,
+                                    fontFamily = Lalezar,
+                                    color = onyx
                                 )
                             }
                         }
@@ -736,6 +825,18 @@ fun HintNotePreview() {
     VTheme {
         HintNotes(isHintVisible = true, movieViewModel = MovieEasyViewModel())
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun LevelCompletePreview(modifier: Modifier = Modifier) {
+    LevelComplete(movieViewModel = MovieEasyViewModel())
+}
+
+@Preview
+@Composable
+fun LevelFailedPreview(modifier: Modifier = Modifier) {
+    LevelFailed(movieViewModel = MovieEasyViewModel(), navController = rememberNavController())
 }
 
 
