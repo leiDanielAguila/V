@@ -2,16 +2,12 @@ package com.example.v
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateValue
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideIn
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -34,8 +30,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
@@ -54,8 +48,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -64,11 +64,9 @@ import androidx.navigation.compose.rememberNavController
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
+import com.example.v.data.MovieUiState
+import com.example.v.model.MovieEasyViewModel
+import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.VTheme
@@ -78,10 +76,10 @@ import com.example.v.ui.theme.darkYellow
 import com.example.v.ui.theme.heartRed
 import com.example.v.ui.theme.lightBlue
 import com.example.v.ui.theme.lightGreen
-import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.navyBlue
 import com.example.v.ui.theme.onyx
 import com.example.v.ui.theme.pastelGreen
+import com.example.v.view.Settings
 import kotlinx.coroutines.delay
 
 // Main screen for Movie easy difficulty
@@ -114,6 +112,10 @@ fun MovieScreen(
     var isCorrectVisible by remember { // TBA
         mutableStateOf(false)
     }
+
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    var isSettingOpen by remember { mutableStateOf(false) }
     
     val colorChanger = when(backgroundColor){ // background changer app logic
         1 -> darkRed
@@ -146,6 +148,10 @@ fun MovieScreen(
                 isHintVisible = isHintVisible, // for hint notes
                 isHintVisibleChange = {
                     isHintVisibleChange -> isHintVisible = isHintVisibleChange
+                },
+                isSettingOpen = isSettingOpen,
+                isSettingOpenChange = {
+                    isSettingOpenChange -> isSettingOpen = isSettingOpenChange
                 },
 
                 navController = navController, // for game exit
@@ -247,6 +253,7 @@ fun MovieScreen(
                     onDone = {
                         movieViewModel.ifUserInputCorrect()
                         movieViewModel.ifGameFinished()
+                        keyboardController?.hide()
                     }
                 ),
                 singleLine = true,
@@ -272,6 +279,9 @@ fun MovieScreen(
             AnimatedVisibility(
                 visible = movieUiState.isGameOverAndWin,
             ) {
+                if (movieUiState.isGameOverAndWin) {
+                    keyboardController?.hide()
+                }
                 LevelComplete(movieViewModel = movieViewModel)
             }
         } // DISPLAY WHEN GAME OVER AND WIN
@@ -323,6 +333,10 @@ fun MovieScreen(
             AnimatedVisibility(
                 visible = movieUiState.isGameOverAndLose
             ) {
+                if (movieUiState.isGameOverAndLose) {
+                    SoundManager.fail()
+                    keyboardController?.hide()
+                }
                 Box(
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -330,6 +344,17 @@ fun MovieScreen(
                 }
             }
         } //  game over and lose
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Settings(isSettingOpen = isSettingOpen, isSettingOpenChange = {
+                isSettingOpenChange -> isSettingOpen = isSettingOpenChange
+            }
+            )
+        }
 
     }
 }
@@ -342,6 +367,8 @@ fun ButtonBar(
     onBackgroundChange: (Int) -> Unit,
     isHintVisible: Boolean,
     isHintVisibleChange: (Boolean) -> Unit,
+    isSettingOpen: Boolean,
+    isSettingOpenChange: (Boolean) -> Unit,
     navController: NavController
 ) {
     Column(
@@ -349,11 +376,12 @@ fun ButtonBar(
     ) {
         Surface(
             modifier
-                .size(width = 44.dp, height = 210.dp)
+                .size(width = 54.dp, height = 250.dp)
                 .fillMaxSize(),
             shape = RoundedCornerShape(15.dp),
-            border = BorderStroke(width = 1.dp, color = onyx),
+            border = BorderStroke(width = 5.dp, color = onyx),
             color = pastelGreen,
+            shadowElevation = 4.dp
 
             ) {
             Column(
@@ -363,7 +391,7 @@ fun ButtonBar(
             ) {
                 IconButton(onClick = { // APP EXIT
                     SoundManager.clickSound()
-                    navController.navigate(CategoryScreen)
+                    navController.navigate(Screen.CategoryScreen)
                 }) {
                     Icon(
                         painterResource(R.drawable.baseline_exit_to_app_24),
@@ -380,8 +408,8 @@ fun ButtonBar(
                         Icon(
                             painterResource(R.drawable.baseline_menu_book_24),
                             contentDescription = "",
-                            tint = Color.Yellow,
-                            modifier = Modifier.size(32.dp)
+                            tint = darkYellow,
+                            modifier = Modifier.size(32.dp).background(Color.White)
                         )
                     } else {
                         Icon(
@@ -420,6 +448,18 @@ fun ButtonBar(
                         modifier = Modifier.size(32.dp)
                     )
                 } // CHANGE BG
+                IconButton(
+                    onClick = {
+                        isSettingOpenChange(!isSettingOpen)
+                    }
+                ) {
+                    Icon(
+                        painterResource(R.drawable.baseline_settings_24),
+                        contentDescription = "",
+                        tint = onyx,
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
             }
         }
     }
@@ -543,7 +583,7 @@ fun LevelFailed(
                 }
                 TextButton(
                     onClick = {
-                        navController.navigate(MainMenu)
+                        navController.navigate(Screen.MainMenu)
                         SoundManager.clickSound()
                     },
                 ) {

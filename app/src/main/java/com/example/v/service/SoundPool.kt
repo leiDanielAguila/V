@@ -1,8 +1,9 @@
-package com.example.v
+package com.example.v.service
 
 import android.content.Context
 import android.media.AudioAttributes
 import android.media.SoundPool
+import com.example.v.R
 
 
 object SoundManager {
@@ -12,6 +13,7 @@ object SoundManager {
     private var correctId: Int? = null
     private var wordUsed: Int? = null
     private var win: Int? = null
+    private var fail: Int? = null
 
     fun initialize(context: Context) {
         soundPool = SoundPool.Builder()
@@ -29,6 +31,7 @@ object SoundManager {
         wrongId = soundPool?.load(context, R.raw.wrong, 1)
         wordUsed = soundPool?.load(context, R.raw.word_used, 1)
         win = soundPool?.load(context, R.raw.win, 1)
+        fail = soundPool?.load(context, R.raw.fail, 1)
     }
 
     fun clickSound() {
@@ -57,6 +60,12 @@ object SoundManager {
 
     fun win() {
         win?.let {
+            id -> soundPool?.play(id, 1f, 1f, 1, 0, 1f)
+        }
+    }
+
+    fun fail() {
+        fail?.let {
             id -> soundPool?.play(id, 1f, 1f, 1, 0, 1f)
         }
     }

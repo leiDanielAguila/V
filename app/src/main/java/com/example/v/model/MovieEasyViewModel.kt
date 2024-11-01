@@ -1,9 +1,11 @@
-package com.example.v
+package com.example.v.model
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import com.example.v.service.SoundManager
+import com.example.v.data.MovieUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -149,8 +151,10 @@ class MovieEasyViewModel: ViewModel() {
         _movieUiState.value = MovieUiState(
             userInput = "",
             userScore = 0,
-            wordTileStorage = mutableSetOf()
-            // keyStorage = mutableSetOf(),
+            wordTileStorage = mutableSetOf(),
+            isGameOverAndWin  = false,
+            isGameOverAndLose = false,
+            gameLives = 3,
         )
         usedWords.clear()
         wordTileStorage.clear()

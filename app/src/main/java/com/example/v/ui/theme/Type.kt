@@ -42,3 +42,7 @@ val Lalezar = FontFamily(
 val Spenbeb = FontFamily(
     Font(R.font.spenbeb, FontWeight.Normal),
 )
+
+val disnep = FontFamily(
+    Font(R.font.disney_font, FontWeight.Normal),
+)

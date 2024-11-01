@@ -1,5 +1,4 @@
-package com.example.v
-
+package com.example.v.data
 
 data class MovieUiState (
     var userInput: String = "",
