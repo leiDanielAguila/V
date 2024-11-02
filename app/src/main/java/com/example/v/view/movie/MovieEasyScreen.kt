@@ -15,7 +15,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -23,7 +22,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,23 +31,28 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.v.R
 import com.example.v.Screen
+import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.darkRed
-import com.example.v.ui.theme.disnep
 import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.onyx
+import com.example.v.view.GameTiles
+import com.example.v.view.MovieTicketHeader
 import com.example.v.view.ReusableNavigationButton
 import com.example.v.view.ScoreCard
+import com.example.v.view.TextFieldInput
 
 @Composable
 fun MovieEasyMainScreen(
     modifier: Modifier = Modifier,
-    navController: NavController
+    navController: NavController,
+    movieViewModel: MovieViewModel
 ) {
 
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
+    var userInput by remember { mutableStateOf("") }
     Box(
         modifier
             .fillMaxSize()
@@ -74,7 +77,7 @@ fun MovieEasyMainScreen(
                 )
                 Spacer(modifier.height(12.dp))
                 ScoreCard(
-
+                    movieViewModel = movieViewModel
                 )
             }
         }
@@ -105,31 +108,34 @@ fun MovieEasyMainScreen(
                 }
             )
         }
-    }
-}
 
-@Composable
-fun MovieTicketHeader(
-    modifier: Modifier = Modifier,
-    header: String
-) {
-    Box(
-        modifier.size(width = 168.dp, height = 113.dp),
-        Alignment.Center
-    ) {
-        Image(
-            painterResource(R.drawable.newmovieticket),
-            contentDescription = "Movie Ticket",
-            contentScale = ContentScale.Crop,
-            modifier = Modifier.matchParentSize()
-        )
-
-        Text(
-            text = header,
-            fontFamily = disnep,
-            fontSize = 32.sp,
-            color = Color.White
-        )
+        Box(
+            modifier.fillMaxSize(),
+            Alignment.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                GameTiles(
+                    movieViewModel = movieViewModel,
+                    outerBoxWidth = 400.dp,
+                    outerBoxHeight = 460.dp,
+                    textBoxWidth = 50.dp,
+                    textBoxHeight = 30.dp
+                )
+                Spacer(modifier.height(6.dp))
+                TextFieldInput(
+                    movieViewModel = movieViewModel,
+                    value = userInput,
+                    onValueChange = { newUserInput ->
+                        userInput = newUserInput
+                    },
+                    onDone = {
+                        movieViewModel.updateUserInput(userInput)
+                    },
+                )
+            }
+        }
     }
 }
 
@@ -204,7 +210,7 @@ fun SelectionBars(
 @Preview
 @Composable
 fun MovieEasyMainScreenPreview() {
-    MovieEasyMainScreen(navController = rememberNavController())
+    MovieEasyMainScreen(navController = rememberNavController(), movieViewModel = MovieViewModel())
 }
 
 

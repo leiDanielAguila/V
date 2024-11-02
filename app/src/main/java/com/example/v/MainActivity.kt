@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.VTheme
@@ -43,7 +44,7 @@ class MainActivity : ComponentActivity() {
                             CategoryScreen(navController = navController)
                         }
                         composable(Screen.MovieEasy.route) {
-                            MovieEasyMainScreen(navController = navController)
+                            MovieEasyMainScreen(navController = navController, movieViewModel = MovieViewModel())
                         }
                     }
                 }
