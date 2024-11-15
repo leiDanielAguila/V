@@ -1,5 +1,6 @@
 package com.example.v.view.movie
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -33,11 +34,14 @@ import com.example.v.R
 import com.example.v.Screen
 import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
+import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.darkRed
+import com.example.v.ui.theme.disnep
 import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.onyx
 import com.example.v.view.GameTiles
+import com.example.v.view.HintNotes
 import com.example.v.view.MovieTicketHeader
 import com.example.v.view.ReusableNavigationButton
 import com.example.v.view.ScoreCard
@@ -47,12 +51,10 @@ import com.example.v.view.TextFieldInput
 fun MovieEasyMainScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
-    movieViewModel: MovieViewModel
 ) {
-
+    val movieViewModel = MovieViewModel()
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
-    var userInput by remember { mutableStateOf("") }
     Box(
         modifier
             .fillMaxSize()
@@ -91,6 +93,8 @@ fun MovieEasyMainScreen(
             MovieTicketHeader(header = "Disney")
         }
 
+
+
         Box(
             modifier
                 .fillMaxSize()
@@ -126,13 +130,32 @@ fun MovieEasyMainScreen(
                 Spacer(modifier.height(6.dp))
                 TextFieldInput(
                     movieViewModel = movieViewModel,
-                    value = userInput,
-                    onValueChange = { newUserInput ->
-                        userInput = newUserInput
-                    },
                     onDone = {
-                        movieViewModel.updateUserInput(userInput)
+                        movieViewModel.checkUserInput()
                     },
+                )
+            }
+        }
+
+        Box(
+            modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            Alignment.TopCenter
+        ) {
+            AnimatedVisibility(
+                modifier = Modifier
+                    .size(width = 270.dp, height = 254.dp),
+                visible = isHintVisible
+            ) {
+                HintNotes(
+                    category = "Disney",
+                    hintCount = 10, // remove 10 before applying to other composable
+                    headerFontFamily = disnep,
+                    bodyFontFamily = Lalezar,
+                    movieViewModel = movieViewModel,
+                    movieHint = movieViewModel.movieEasyHints, // change depending on the difficulty level
+                    movieYear = movieViewModel.movieEasyYears // change depending on movies
                 )
             }
         }
@@ -209,9 +232,11 @@ fun SelectionBars(
 
 @Preview
 @Composable
-fun MovieEasyMainScreenPreview() {
-    MovieEasyMainScreen(navController = rememberNavController(), movieViewModel = MovieViewModel())
+fun MovieEasyPreview(modifier: Modifier = Modifier) {
+    MovieEasyMainScreen(navController = rememberNavController())
 }
+
+
 
 
 
