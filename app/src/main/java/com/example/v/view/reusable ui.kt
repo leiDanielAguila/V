@@ -239,10 +239,14 @@ fun MovieTicketHeader(
 fun GameTiles(
     modifier: Modifier = Modifier,
     movieViewModel: MovieViewModel,
+    tilesCount: Int, // the overall tiles count
+    movieTiles: Map<Int, Char>, // for movie tiles refer to viewmodel and the actual tiles
+    movieNumberTiles: Map<Int, Any>, // for number tiles
     outerBoxWidth: Dp = 400.dp,
     outerBoxHeight: Dp = 400.dp,
     textBoxHeight: Dp = 30.dp,
-    textBoxWidth: Dp = 20.dp
+    textBoxWidth: Dp = 20.dp,
+    gridCount: Int // for the grid count inside the box {the width}
 ) {
     val movieUiState by movieViewModel.movieUiState.collectAsState()
     Surface(
@@ -252,15 +256,15 @@ fun GameTiles(
         shape = RoundedCornerShape(10.dp)
     ) {
         LazyVerticalGrid(
-            columns = GridCells.Fixed(12),
+            columns = GridCells.Fixed(gridCount),
             verticalArrangement = Arrangement.spacedBy(3.dp),
             horizontalArrangement = Arrangement.spacedBy(3.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(12.dp)
         ) {
-            items(count = movieViewModel.gameTilesCount) {
-                if (it in movieViewModel.movieEasyTiles.keys) {
+            items(count = tilesCount) {
+                if (it in movieTiles) {
                     Surface(
                         modifier = Modifier.size(width = textBoxWidth, height = textBoxHeight),
                         color = Color.White,
@@ -274,7 +278,7 @@ fun GameTiles(
                         ) {
                             if (it in movieUiState.wordTileStorage) {
                                 Text(
-                                    text = movieViewModel.movieEasyTiles[it].toString(),
+                                    text = "${movieTiles[it]}",
                                     color = Color.Black,
                                     fontFamily = Spenbeb
                                 )
@@ -282,7 +286,7 @@ fun GameTiles(
                         }
 
                     }
-                } else if (it in movieViewModel.numberTiles.keys) { // for numbers
+                } else if (it in movieNumberTiles.keys) { // for numbers
                     Surface(
                         modifier = Modifier.size(width = 20.dp, height = 30.dp),
                         color = Color.Transparent,
@@ -294,7 +298,7 @@ fun GameTiles(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Text(
-                                text = movieViewModel.numberTiles[it].toString(),
+                                text = movieNumberTiles[it].toString(),
                                 color = Color.White,
                                 fontSize = 18.sp,
                                 fontFamily = Spenbeb,

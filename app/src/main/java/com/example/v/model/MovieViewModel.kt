@@ -15,10 +15,15 @@ class MovieViewModel: ViewModel() {
     private val _movieUiState = MutableStateFlow(MovieUiState())
     val movieUiState: StateFlow<MovieUiState> = _movieUiState.asStateFlow()
 
+
+    internal val movieDisneyEasyGridCount = 12
+    internal val movieDisneyMediumGridCount = 10
     internal val gameTilesCount = 156
     internal val hintNoteCount = 10
+    internal val hintNoteDisneyMedium = 6
+    internal val gameTilesDisneyMediumCount = 160
     private val scoreIncrease = 10
-    var updatedScore = 0
+    private var updatedScore = 0
 
     private var usedWords: MutableSet<String> = mutableSetOf()
     private var wordTileStorage: MutableSet<Int> = mutableSetOf()
@@ -43,7 +48,7 @@ class MovieViewModel: ViewModel() {
     private val luca = setOf(109, 121, 133, 145)
     private val raya = setOf(63, 64, 65, 66)
 
-    private val movieEasyWords = mapOf(
+    val movieEasyWords = mapOf(
         moana to "moana",
         mulan to "mulan",
         tangled to "tangled",
@@ -82,7 +87,48 @@ class MovieViewModel: ViewModel() {
         9 to "A sea monster hides his true identity while experiencing a life-changing summer"
     )
 
-    val numberTiles = mapOf(6 to '1', 20 to '7',40 to '2', 51 to '3',59 to '9',62 to '4',79 to '8',84 to '5',108 to '6', 97 to "10")
+    val movieDisneyMediumTiles = mapOf(14 to 't', 24 to 'o', 34 to 'y', 44 to 's', 54 to 't', 64 to 'o', 74 to 'r', 84 to 'y', 22 to 'z', 23 to 'o',
+        24 to 'o', 25 to 't', 26 to 'o', 27 to 'p', 28 to 'i', 29 to 'a', 28 to 'i', 38 to 'n', 48 to 'c', 58 to 'r', 68 to 'e' , 78 to 'd', 88 to 'i',
+        98 to 'b', 108 to 'l', 118 to 'e', 128 to 's', 72 to 'd', 73 to 'o', 74 to 'r', 75 to 'y', 121 to 'm', 122 to 'o', 123 to 'n' ,124 to 's',
+        125 to 't', 126 to 'e', 127 to 'r', 128 to 's', 117 to 'b', 127 to 'r', 137 to 'a', 147 to 'v', 157 to 'e')
+
+    val movieDisneyMediumNumberTiles = mapOf(4 to '1', 21 to '2', 71 to '4', 107 to '6', 18 to '3', 120 to '5')
+
+    private val toystory: Set<Int> = setOf(14,24,34,44,54,64,74,84)
+    private val zootopia: Set<Int> = setOf(22,23,24,25,26,27,28,29)
+    private val incredibles: Set<Int> = setOf(28,38,48,58,68,78,88,98,108,118,128)
+    private val dory: Set<Int> = setOf(72,73,74,75)
+    private val monsters: Set<Int> = setOf(121,122,123,124,125,126,127,128)
+    private val brave: Set<Int> = setOf(117,127,137,147,157)
+
+    val movieDisneyMediumWords = mapOf(
+        toystory to "toystory",
+        zootopia to "zootopia",
+        incredibles to "incredibles",
+        dory to "dory",
+        monsters to "monsters",
+        brave to "brave"
+    )
+    val movieDisneyMediumYears = mapOf(
+        0 to "1995",
+        1 to "2016",
+        2 to "2004",
+        3 to "2016",
+        4 to "2001",
+        5 to "2012"
+    )
+
+    val movieDisneyMediumHints = mapOf(
+        0 to "The secret life of toys.",
+        1 to "A bunny cop and a fox solve a mystery.",
+        2 to "A superhero family saves the day.",
+        3 to "A forgetful fish",
+        4 to "Monsters scare to power their world",
+        5 to "an irish princess with a bear mother"
+    )
+
+
+    val movieEasyNumberTiles = mapOf(6 to '1', 20 to '7',40 to '2', 51 to '3',59 to '9',62 to '4',79 to '8',84 to '5',108 to '6', 97 to "10")
 
     fun updateUserInput(newUserInput: String) {
         userInput = newUserInput.lowercase().replace("\\s".toRegex(), "")
@@ -92,11 +138,13 @@ class MovieViewModel: ViewModel() {
         userInput = ""
     }
 
-    fun checkUserInput() {
-        if (userInput in movieEasyWords.values && userInput !in usedWords) {
+    fun checkUserInput(
+        movieWords: Map<Set<Int>, String>,
+    ) {
+        if (userInput in movieWords.values && userInput !in usedWords) {
             updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
             usedWords.add(userInput)
-            findWord()
+            findWord(movieWords)
             updateState()
             SoundManager.correctSound()
             clearUserInput()
@@ -110,8 +158,10 @@ class MovieViewModel: ViewModel() {
         }
     }
 
-    private fun findWord() {
-        for ((key, value) in movieEasyWords) {
+    private fun findWord(
+        movieWords: Map<Set<Int>, String>
+    ) {
+        for ((key, value) in movieWords) {
             if (userInput == value) {
                 wordTileStorage.addAll(key)
             }

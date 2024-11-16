@@ -1,10 +1,7 @@
 package com.example.v.view.movie
-
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -12,10 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,13 +26,9 @@ import androidx.navigation.compose.rememberNavController
 import com.example.v.R
 import com.example.v.Screen
 import com.example.v.model.MovieViewModel
-import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.darkRed
 import com.example.v.ui.theme.disnep
-import com.example.v.ui.theme.lightGreen
-import com.example.v.ui.theme.lightRed
-import com.example.v.ui.theme.onyx
 import com.example.v.view.GameTiles
 import com.example.v.view.HintNotes
 import com.example.v.view.MovieTicketHeader
@@ -48,7 +37,7 @@ import com.example.v.view.ScoreCard
 import com.example.v.view.TextFieldInput
 
 @Composable
-fun MovieEasyMainScreen(
+fun MovieDisneyMediumMainScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
 ) {
@@ -114,28 +103,28 @@ fun MovieEasyMainScreen(
         }
 
         Box(
-            modifier.fillMaxSize(),
-            Alignment.Center
+            modifier.fillMaxSize().padding(bottom = 90.dp),
+            Alignment.BottomCenter
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 GameTiles(
                     movieViewModel = movieViewModel,
-                    outerBoxWidth = 400.dp,
-                    outerBoxHeight = 460.dp,
-                    textBoxWidth = 50.dp,
+                    outerBoxWidth = 340.dp,
+                    outerBoxHeight = 550.dp,
+                    textBoxWidth = 30.dp,
                     textBoxHeight = 30.dp,
-                    movieTiles = movieViewModel.movieEasyTiles,
-                    tilesCount = movieViewModel.gameTilesCount,
-                    movieNumberTiles = movieViewModel.movieEasyNumberTiles,
-                    gridCount = movieViewModel.movieDisneyEasyGridCount
+                    tilesCount = movieViewModel.gameTilesDisneyMediumCount,
+                    movieTiles = movieViewModel.movieDisneyMediumTiles,
+                    movieNumberTiles = movieViewModel.movieDisneyMediumNumberTiles,
+                    gridCount = movieViewModel.movieDisneyMediumGridCount
                 )
-                Spacer(modifier.height(6.dp))
+                Spacer(modifier.height(22.dp))
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
-                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieEasyWords)
+                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieDisneyMediumWords)
                     },
                 )
             }
@@ -154,90 +143,24 @@ fun MovieEasyMainScreen(
             ) {
                 HintNotes(
                     category = "Disney",
-                    hintCount = movieViewModel.hintNoteCount, // remove 10 before applying to other composable
+                    hintCount = movieViewModel.hintNoteDisneyMedium, // remove 10 before applying to other composable
                     headerFontFamily = disnep,
                     bodyFontFamily = Lalezar,
                     movieViewModel = movieViewModel,
-                    movieHint = movieViewModel.movieEasyHints, // change depending on the difficulty level
-                    movieYear = movieViewModel.movieEasyYears // change depending on movies
+                    movieHint = movieViewModel.movieDisneyMediumHints, // change depending on the difficulty level
+                    movieYear = movieViewModel.movieDisneyMediumYears // change depending on movies
                 )
             }
         }
     }
 }
 
-@Composable
-fun SelectionBars(
-    isHintVisible: Boolean,
-    isHintVisibleChange: (Boolean) -> Unit,
-    isSettingVisible: Boolean,
-    isSettingVisibleChange: (Boolean) -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Surface(
-        modifier
-            .size(width = 54.dp, height = 180.dp),
-        border = BorderStroke(3.dp, onyx),
-        shape = RoundedCornerShape(15.dp),
-        color = lightRed
-    ) {
-        Column(
-            modifier.fillMaxSize(),
-            verticalArrangement = Arrangement.SpaceEvenly,
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            IconButton(
-                onClick = {
-                    isHintVisibleChange(!isHintVisible)
-                    SoundManager.clickSound()
-                }
-            ) {
-                if (isHintVisible) {
-                    Icon(
-                        painterResource(R.drawable.baseline_library_books_24),
-                        contentDescription = "",
-                        tint = lightGreen,
-                        modifier = Modifier.size(38.dp)
-                    )
-                } else {
-                    Icon(
-                        painterResource(R.drawable.baseline_library_books_24),
-                        contentDescription = "",
-                        tint = onyx,
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-            }
 
-            IconButton(
-                onClick = {
-                    isSettingVisibleChange(!isSettingVisible)
-                    SoundManager.clickSound()
-                }
-            ) {
-                if (isSettingVisible) {
-                    Icon(
-                        painterResource(R.drawable.baseline_settings_24),
-                        contentDescription = "Settings",
-                        tint = lightGreen,
-                        modifier = Modifier.size(38.dp)
-                    )
-                } else {
-                    Icon(
-                        painterResource(R.drawable.baseline_settings_24),
-                        contentDescription = "Settings",
-                        tint = onyx
-                    )
-                }
-            }
-        }
-    }
-}
 
 @Preview
 @Composable
-fun MovieEasyPreview(modifier: Modifier = Modifier) {
-    MovieEasyMainScreen(navController = rememberNavController())
+fun MovieDisneyMediumPreview(modifier: Modifier = Modifier) {
+    MovieDisneyMediumMainScreen(navController = rememberNavController())
 }
 
 

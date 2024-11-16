@@ -19,6 +19,7 @@ import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.VTheme
 import com.example.v.view.CategoryScreen
 import com.example.v.view.MainScreen
+import com.example.v.view.movie.MovieDisneyMediumMainScreen
 import com.example.v.view.movie.MovieEasyMainScreen
 
 class MainActivity : ComponentActivity() {
@@ -45,6 +46,9 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.MovieEasy.route) {
                             MovieEasyMainScreen(navController = navController)
                         }
+                        composable(Screen.MovieDisneyMedium.route) {
+                            MovieDisneyMediumMainScreen(navController = navController)
+                        }
                     }
                 }
             }
@@ -65,5 +69,6 @@ class MainActivity : ComponentActivity() {
 enum class Screen(val route: String) {
     MainMenu("MainMenu"),
     CategoryScreen("CategoryScreen"),
-    MovieEasy("MovieEasy")
+    MovieEasy("MovieEasy"),
+    MovieDisneyMedium("MovieDisneyMedium")
 }
