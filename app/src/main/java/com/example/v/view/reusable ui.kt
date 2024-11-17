@@ -156,7 +156,7 @@ fun DifficultySelector(
                 }
 
                 Button(
-                    onClick = { /*TODO*/ },
+                    onClick = { navController.navigate(Screen.MovieDisneyMedium.route) },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),
                     colors = ButtonDefaults.buttonColors(darkYellow)
                 ) {
@@ -165,7 +165,7 @@ fun DifficultySelector(
                 }
 
                 Button(
-                    onClick = {},
+                    onClick = { navController.navigate(Screen.MovieDisneyHard.route) },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),
                     colors = ButtonDefaults.buttonColors(darkRed)
                 ) {
@@ -335,7 +335,7 @@ fun TextFieldInput(
         keyboardOptions = KeyboardOptions.Default.copy(
             imeAction = ImeAction.Done,
         ),
-        label = {Text(text = labelText)},
+        label = {Text(text = labelText)}
 //        leadingIcon = {
 //            Icon(imageVector = Icons.AutoMirrored.Filled.Send, contentDescription = "", tint = Color.LightGray)
 //        }

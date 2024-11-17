@@ -46,3 +46,11 @@ val Spenbeb = FontFamily(
 val disnep = FontFamily(
     Font(R.font.disney_font, FontWeight.Normal),
 )
+
+val scifi = FontFamily(
+    Font(R.font.scifi, FontWeight.Normal),
+)
+
+val marvel = FontFamily(
+    Font(R.font.marvel, FontWeight.Normal),
+)

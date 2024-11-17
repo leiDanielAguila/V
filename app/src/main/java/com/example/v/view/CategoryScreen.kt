@@ -75,10 +75,8 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
            // verticalArrangement = Arrangement.SpaceEvenly,
         ) {
             MovieCard(
-                onClick = onClick,
-                onClickChange = {
-                    onClickChange -> onClick = onClickChange
-                }
+                navController = navController,
+                navigate = Screen.GenreScreen,
             )
         }
 
@@ -92,7 +90,8 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
         ) {
             TechnologyCard()
         }
-        Column(
+
+        Column( // difficulty selector
             modifier = Modifier.fillMaxSize()
         ) {
             DifficultySelector(
@@ -106,13 +105,13 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
 
 @Composable
 fun MovieCard(
-    onClick: Boolean,
-    onClickChange: (Boolean) -> Unit
+    navigate: Screen,
+    navController: NavController,
 ) {
     Box(
         modifier = Modifier
             .clickable {
-                onClickChange(!onClick)
+                navController.navigate(navigate.route)
                 SoundManager.clickSound()
             }
             .size(width = 268.dp, height = 181.dp)

@@ -18,6 +18,7 @@ import com.example.v.service.SoundManager
 import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.VTheme
 import com.example.v.view.CategoryScreen
+import com.example.v.view.GenreScreen
 import com.example.v.view.MainScreen
 import com.example.v.view.movie.MovieDisneyHardMainScreen
 import com.example.v.view.movie.MovieDisneyMediumMainScreen
@@ -34,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 Box(modifier = Modifier.background(BackgroundScreenColor)) {
                     NavHost(
                         navController = navController ,
-                        startDestination = Screen.MovieDisneyHard.route, // change when done testing
+                        startDestination = Screen.CategoryScreen.route, // change when done testing
                         enterTransition = { fadeIn(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) },
                         exitTransition = { fadeOut(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) }
                     ) {
@@ -52,6 +53,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.MovieDisneyHard.route) {
                             MovieDisneyHardMainScreen(navController = navController)
+                        }
+                        composable(Screen.GenreScreen.route) {
+                            GenreScreen(navController = navController)
                         }
                     }
                 }
@@ -75,5 +79,6 @@ enum class Screen(val route: String) {
     CategoryScreen("CategoryScreen"),
     MovieEasy("MovieEasy"),
     MovieDisneyMedium("MovieDisneyMedium"),
-    MovieDisneyHard("MovieDisneyHard")
+    MovieDisneyHard("MovieDisneyHard"),
+    GenreScreen("GenreScreen")
 }

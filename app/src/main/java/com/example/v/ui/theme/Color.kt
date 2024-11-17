@@ -32,3 +32,4 @@ val darkGreen = Color(0xFF106C1B)
 val darkYellow = Color(0xFFFDDA0D)
 
 val cream1 = Color(0xFFFFFDD0)
+val lightBlue1 = Color(0xFFADD8E6)
