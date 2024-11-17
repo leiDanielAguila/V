@@ -71,7 +71,8 @@ fun ReusableNavigationButton(
     destination: Screen,
     textInButton: String,
     fontSize: TextUnit,
-    navController: NavController
+    navController: NavController,
+    font: FontFamily = Spenbeb
 ) {
     Button(
         onClick = {
@@ -85,7 +86,7 @@ fun ReusableNavigationButton(
             text = textInButton,
             color = onyx,
             fontSize = fontSize,
-            fontFamily = Spenbeb
+            fontFamily = font
         )
     }
 }

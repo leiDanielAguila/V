@@ -18,10 +18,17 @@ class MovieViewModel: ViewModel() {
 
     internal val movieDisneyEasyGridCount = 12
     internal val movieDisneyMediumGridCount = 10
-    internal val gameTilesCount = 156
+    internal val movieDisneyHardGridCount = 9
+
     internal val hintNoteCount = 10
     internal val hintNoteDisneyMedium = 6
+    internal val hintNoteDisneyHard = 4
+
+    internal val gameTilesCount = 156
     internal val gameTilesDisneyMediumCount = 160
+    internal val gameTilesDisneyHardCount = 98
+
+
     private val scoreIncrease = 10
     private var updatedScore = 0
 
@@ -127,8 +134,42 @@ class MovieViewModel: ViewModel() {
         5 to "an irish princess with a bear mother"
     )
 
-
     val movieEasyNumberTiles = mapOf(6 to '1', 20 to '7',40 to '2', 51 to '3',59 to '9',62 to '4',79 to '8',84 to '5',108 to '6', 97 to "10")
+
+    val movieDisneyHardTiles = mapOf(
+        13 to 'p', 22 to 'o', 31 to 'c', 40 to 'a', 49 to 'h', 58 to 'o', 67 to 'n',
+        76 to 't', 85 to 'a', 94 to 's', 12 to 'u', 28 to 'h', 29 to 'e', 30 to 'r',
+        32 to 'u', 33 to 'l', 34 to 'e', 35 to 's', 43 to 'n', 52 to 'c', 61 to 'a',
+        70 to 'n', 79 to 't', 88 to 'o'
+    )
+
+    val movieDisneyHardNumberTiles = mapOf(4 to "1", 11 to "2", 27 to "3", 25 to "4")
+
+    private val pocahontas: Set<Int> = setOf(13,22,31,40,49,58,67,76,85,94)
+    private val up: Set<Int> = setOf(12,13)
+    private val hercules: Set<Int> = setOf(28,29,30,31,32,33,34,35)
+    private val encanto: Set<Int> = setOf(34,43,52,61,70,79,88)
+
+    val movieDisneyHardWords = mapOf(
+        pocahontas to "pocahontas",
+        up to "up",
+        hercules to "hercules",
+        encanto to "encanto"
+    )
+
+    val movieDisneyHardYears = mapOf(
+        0 to "1995",
+        1 to "2009",
+        2 to "1997",
+        3 to "2021"
+    )
+
+    val movieDisneyHardHints = mapOf(
+        0 to "An adventurous Native American woman finds love and navigates cultural differences.",
+        1 to "A heartfelt journey of an old man, a boy scout, and a floating house.",
+        2 to "A god becomes a hero, proving his worth and finding his place on Mount Olympus.",
+        3 to "A magical family, a special house, and the power of embracing one’s uniqueness."
+    )
 
     fun updateUserInput(newUserInput: String) {
         userInput = newUserInput.lowercase().replace("\\s".toRegex(), "")

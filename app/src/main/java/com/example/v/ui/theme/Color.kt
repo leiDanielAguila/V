@@ -30,3 +30,5 @@ val pastelGreen = Color(0xFFC1E1C1)
 val lightGreen = Color(0xFF5BB432)
 val darkGreen = Color(0xFF106C1B)
 val darkYellow = Color(0xFFFDDA0D)
+
+val cream1 = Color(0xFFFFFDD0)

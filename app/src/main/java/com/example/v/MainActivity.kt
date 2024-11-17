@@ -19,6 +19,7 @@ import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.VTheme
 import com.example.v.view.CategoryScreen
 import com.example.v.view.MainScreen
+import com.example.v.view.movie.MovieDisneyHardMainScreen
 import com.example.v.view.movie.MovieDisneyMediumMainScreen
 import com.example.v.view.movie.MovieEasyMainScreen
 
@@ -33,7 +34,7 @@ class MainActivity : ComponentActivity() {
                 Box(modifier = Modifier.background(BackgroundScreenColor)) {
                     NavHost(
                         navController = navController ,
-                        startDestination = Screen.MovieEasy.route, // change when done testing
+                        startDestination = Screen.MovieDisneyHard.route, // change when done testing
                         enterTransition = { fadeIn(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) },
                         exitTransition = { fadeOut(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) }
                     ) {
@@ -48,6 +49,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.MovieDisneyMedium.route) {
                             MovieDisneyMediumMainScreen(navController = navController)
+                        }
+                        composable(Screen.MovieDisneyHard.route) {
+                            MovieDisneyHardMainScreen(navController = navController)
                         }
                     }
                 }
@@ -70,5 +74,6 @@ enum class Screen(val route: String) {
     MainMenu("MainMenu"),
     CategoryScreen("CategoryScreen"),
     MovieEasy("MovieEasy"),
-    MovieDisneyMedium("MovieDisneyMedium")
+    MovieDisneyMedium("MovieDisneyMedium"),
+    MovieDisneyHard("MovieDisneyHard")
 }
