@@ -35,7 +35,7 @@ class MainActivity : ComponentActivity() {
                 Box(modifier = Modifier.background(BackgroundScreenColor)) {
                     NavHost(
                         navController = navController ,
-                        startDestination = Screen.CategoryScreen.route, // change when done testing
+                        startDestination = Screen.MovieDisneyHard.route, // change when done testing
                         enterTransition = { fadeIn(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) },
                         exitTransition = { fadeOut(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) }
                     ) {

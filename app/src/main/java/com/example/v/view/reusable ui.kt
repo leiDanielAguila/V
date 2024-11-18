@@ -1,11 +1,19 @@
 package com.example.v.view
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.VectorConverter
+import androidx.compose.animation.core.animateValue
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.snapping.rememberSnapFlingBehavior
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,6 +45,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -45,7 +54,6 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -53,15 +61,18 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.v.R
 import com.example.v.Screen
+import com.example.v.data.MovieUiState
 import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.Yellow
 import com.example.v.ui.theme.anotherWhite
-import com.example.v.ui.theme.darkRed
+import com.example.v.ui.theme.cream
+import com.example.v.ui.theme.darkGreen
 import com.example.v.ui.theme.darkYellow
 import com.example.v.ui.theme.disnep
+import com.example.v.ui.theme.heartRed
 import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.onyx
@@ -167,7 +178,7 @@ fun DifficultySelector(
                 Button(
                     onClick = { navController.navigate(Screen.MovieDisneyHard.route) },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),
-                    colors = ButtonDefaults.buttonColors(darkRed)
+                    colors = ButtonDefaults.buttonColors(Color.Red)
                 ) {
                     // hard button
                     Text("Hard", fontSize = 32.sp, fontFamily = Spenbeb)
@@ -176,6 +187,97 @@ fun DifficultySelector(
         }
     }
 }
+
+
+@Composable
+fun GameOver(
+    modifier: Modifier = Modifier,
+    text: String,
+    color: Color,
+    font: FontFamily,
+    navController: NavController
+) {
+    Box(
+        modifier.size(width = 250.dp, height = 241.dp)
+            .clip(RoundedCornerShape(20.dp))
+            .background(color)
+
+    ) {
+        Column(
+            modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.SpaceEvenly,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = text,
+                fontSize = 22.sp,
+                color = cream,
+                fontFamily = font
+            )
+
+            ReusableNavigationButton(
+                Screen.CategoryScreen,
+                textInButton = "Next",
+                20.sp,
+                navController = navController
+            )
+        }
+    }
+}
+
+@Composable
+fun GameHearts(
+    modifier: Modifier = Modifier,
+    movieUiState: MovieUiState
+) {
+    val infiniteTransition = rememberInfiniteTransition(label = "")
+
+    val heartSize by infiniteTransition.animateValue(
+        initialValue = 30.dp,
+        targetValue = 43.dp,
+        typeConverter = Dp.VectorConverter,
+        animationSpec = infiniteRepeatable(
+            animation = tween(
+                durationMillis = 700,
+                easing = FastOutSlowInEasing
+            ),
+            repeatMode = RepeatMode.Reverse
+        ), label = ""
+    )
+
+    Box(
+        modifier
+            .size(width = 150.dp, height = 62.dp)
+            .background(darkGreen)
+            .border(3.dp, Color.Black)
+    ) {
+        Row(
+            modifier = Modifier.matchParentSize(),
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            val totalLives = 3
+            (0 until totalLives).forEach { index ->
+                if (index < movieUiState.gameLives) {
+                    // Display a full heart for remaining lives
+                    Image(
+                        painter = painterResource(R.drawable.heart),
+                        contentDescription = "User life",
+                        modifier = Modifier.size(heartSize)
+                    )
+                } else {
+                    // Display a broken heart for lost lives
+                    Icon(
+                        painter = painterResource(R.drawable.baseline_heart_broken_24),
+                        contentDescription = "Broken heart",
+                        tint = heartRed
+                    )
+                }
+            }
+        }
+    }
+}
+
 
 @Composable
 fun ScoreCard(
@@ -247,7 +349,8 @@ fun GameTiles(
     outerBoxHeight: Dp = 400.dp,
     textBoxHeight: Dp = 30.dp,
     textBoxWidth: Dp = 20.dp,
-    gridCount: Int // for the grid count inside the box {the width}
+    gridCount: Int, // for the grid count inside the box {the width}
+    boxColor: Color
 ) {
     val movieUiState by movieViewModel.movieUiState.collectAsState()
     Surface(
@@ -265,10 +368,10 @@ fun GameTiles(
                 .padding(12.dp)
         ) {
             items(count = tilesCount) {
-                if (it in movieTiles) {
+                if (it in movieTiles && it !in movieUiState.wordTileStorage) {
                     Surface(
                         modifier = Modifier.size(width = textBoxWidth, height = textBoxHeight),
-                        color = Color.White,
+                        color = boxColor,
                         shape = RoundedCornerShape(5.dp),
                         border = BorderStroke(2.dp, Color.Black)
                     ) { // for text
@@ -277,13 +380,13 @@ fun GameTiles(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (it in movieUiState.wordTileStorage) {
-                                Text(
-                                    text = "${movieTiles[it]}",
-                                    color = Color.Black,
-                                    fontFamily = Spenbeb
-                                )
-                            }
+//                            if (it in movieUiState.wordTileStorage) {
+//                                Text(
+//                                    text = "${movieTiles[it]}",
+//                                    color = Color.Black,
+//                                    fontFamily = Spenbeb
+//                                )
+//                            }
                         }
 
                     }
@@ -306,7 +409,29 @@ fun GameTiles(
                             )
                         }
                     }
-                } // for numbers scope
+                } else if (it in movieTiles && it in movieUiState.wordTileStorage) {
+                    Surface(
+                        modifier = Modifier.size(width = textBoxWidth, height = textBoxHeight),
+                        color = Color.Green,
+                        shape = RoundedCornerShape(5.dp),
+                        border = BorderStroke(2.dp, Color.Black)
+                    ) { // for text
+                        Row(
+                            modifier = Modifier.fillMaxSize(),
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            if (it in movieUiState.wordTileStorage) {
+                                Text(
+                                    text = "${movieTiles[it]}",
+                                    color = Color.Black,
+                                    fontFamily = Spenbeb
+                                )
+                            }
+                        }
+
+                    }
+                }
             }
         }
     }
@@ -371,7 +496,9 @@ fun HintNotes(
                 colors = CardDefaults.cardColors(Yellow)
             ) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(12.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(12.dp),
                 ) {
                     Text(
                         text = category,
@@ -403,7 +530,9 @@ fun HintNotes(
                 } // row scope
 
                 Column(
-                    modifier.fillMaxSize().padding(12.dp),
+                    modifier
+                        .fillMaxSize()
+                        .padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -420,15 +549,3 @@ fun HintNotes(
     }
 }
 
-@Preview
-@Composable
-fun HintNotesPreview(
-    modifier: Modifier = Modifier
-) {
-    HintNotes(
-        category = "Disney",
-        headerFontFamily = disnep,
-        bodyFontFamily = Lalezar,
-        movieViewModel = MovieViewModel()
-    )
-}

@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -23,12 +25,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.v.R
 import com.example.v.Screen
 import com.example.v.model.MovieViewModel
+import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
+import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.darkRed
 import com.example.v.ui.theme.disnep
+import com.example.v.ui.theme.lightGreen
+import com.example.v.view.GameHearts
+import com.example.v.view.GameOver
 import com.example.v.view.GameTiles
 import com.example.v.view.HintNotes
 import com.example.v.view.MovieTicketHeader
@@ -42,8 +52,32 @@ fun MovieDisneyMediumMainScreen(
     navController: NavController,
 ) {
     val movieViewModel = remember { MovieViewModel() }
+    val movieUiState by movieViewModel.movieUiState.collectAsState()
+
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
+
+    var isGameOver by remember { mutableStateOf(false) }
+    var gameOverText by remember { mutableStateOf("") }
+    var gameOverColor by remember { mutableStateOf(lightGreen) }
+    var isWin by remember { mutableStateOf(false) }
+
+    var boxColor by remember { mutableStateOf(Color.White) }
+
+    val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
+
+
+    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords) == 1) {
+        isGameOver = true
+        gameOverText = "Game Over"
+        gameOverColor = darkRed
+    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords) == 2) {
+        isGameOver = true
+        gameOverText = "Level Complete!"
+        gameOverColor = lightGreen
+        isWin = true
+    }
+
     Box(
         modifier
             .fillMaxSize()
@@ -82,7 +116,16 @@ fun MovieDisneyMediumMainScreen(
             MovieTicketHeader(header = "Disney")
         }
 
-
+        Box(
+            modifier
+                .fillMaxSize()
+                .padding(top = 140.dp),
+            Alignment.TopCenter
+        ) {
+            GameHearts(
+                movieUiState = movieUiState
+            )
+        }
 
         Box(
             modifier
@@ -118,7 +161,8 @@ fun MovieDisneyMediumMainScreen(
                     tilesCount = movieViewModel.gameTilesDisneyMediumCount,
                     movieTiles = movieViewModel.movieDisneyMediumTiles,
                     movieNumberTiles = movieViewModel.movieDisneyMediumNumberTiles,
-                    gridCount = movieViewModel.movieDisneyMediumGridCount
+                    gridCount = movieViewModel.movieDisneyMediumGridCount,
+                    boxColor = boxColor
                 )
                 Spacer(modifier.height(22.dp))
                 TextFieldInput(
@@ -127,6 +171,34 @@ fun MovieDisneyMediumMainScreen(
                         movieViewModel.checkUserInput(movieWords = movieViewModel.movieDisneyMediumWords)
                     },
                 )
+            }
+        }
+
+        Box(
+            modifier.fillMaxSize(),
+            Alignment.Center
+        ) {
+            AnimatedVisibility(
+                visible = isGameOver
+            ) {
+                GameOver(
+                    text = gameOverText,
+                    navController = navController,
+                    font = Spenbeb,
+                    color = gameOverColor
+                )
+            }
+        }
+
+        Box (
+            modifier.fillMaxSize(),
+            Alignment.Center
+        ) {
+            AnimatedVisibility(
+                visible = isWin
+            ) {
+                SoundManager.win()
+                LottieAnimation(composition = confetti, iterations = 10)
             }
         }
 

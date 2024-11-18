@@ -31,6 +31,7 @@ class MovieViewModel: ViewModel() {
 
     private val scoreIncrease = 10
     private var updatedScore = 0
+    private var updatedWordCount = 0
 
     private var usedWords: MutableSet<String> = mutableSetOf()
     private var wordTileStorage: MutableSet<Int> = mutableSetOf()
@@ -182,10 +183,12 @@ class MovieViewModel: ViewModel() {
     fun checkUserInput(
         movieWords: Map<Set<Int>, String>,
     ) {
-        if (userInput in movieWords.values && userInput !in usedWords) {
+        if (userInput in movieWords.values
+            && userInput !in usedWords) {
             updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
             usedWords.add(userInput)
             findWord(movieWords)
+            updatedWordCount = _movieUiState.value.wordCount.plus(1)
             updateState()
             SoundManager.correctSound()
             clearUserInput()
@@ -195,9 +198,28 @@ class MovieViewModel: ViewModel() {
         } else {
             SoundManager.wrongSound()
             clearUserInput()
-           // removeOneLife()
+            removeOneLife()
         }
     }
+
+    fun checkIfGameIsOver(
+       movieWords: Map<Set<Int>, String>
+    ): Int {
+        var gameOverStatus = 0
+
+        // 1 is gameOver and lose
+        // 2 is gameOver and win
+
+        if (_movieUiState.value.gameLives == 0) {
+            gameOverStatus = 1
+        } else if (_movieUiState.value.wordCount == movieWords.size) {
+            gameOverStatus = 2
+        }
+
+        return gameOverStatus
+    }
+
+
 
     private fun findWord(
         movieWords: Map<Set<Int>, String>
@@ -209,11 +231,21 @@ class MovieViewModel: ViewModel() {
         }
     }
 
+    private fun removeOneLife() {
+        _movieUiState.update { currentState ->
+            currentState.copy(
+                gameLives = currentState.gameLives - 1,
+                isCorrect = false
+            )
+        }
+    }
+
     private fun updateState() {
         _movieUiState.update { currentState ->
             currentState.copy(
                 userScore = updatedScore,
-                wordTileStorage = wordTileStorage
+                wordTileStorage = wordTileStorage,
+                wordCount = updatedWordCount
             )
         }
     }
@@ -226,6 +258,7 @@ class MovieViewModel: ViewModel() {
             isGameOverAndWin  = false,
             isGameOverAndLose = false,
             gameLives = 3,
+            wordCount = 0
         )
         usedWords.clear()
         wordTileStorage.clear()
