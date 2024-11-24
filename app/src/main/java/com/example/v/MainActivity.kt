@@ -14,6 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.room.Room
+import com.example.v.data.AppDatabase
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.VTheme
@@ -23,7 +25,7 @@ import com.example.v.view.MainScreen
 import com.example.v.view.movie.MovieDisneyHardMainScreen
 import com.example.v.view.movie.MovieDisneyMediumMainScreen
 import com.example.v.view.movie.MovieEasyMainScreen
-import com.example.v.view.movie.MovieSuperHeroEasyMainScreen
+import com.example.v.view.superhero.MovieSuperHeroEasyMainScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -33,6 +35,11 @@ class MainActivity : ComponentActivity() {
         setContent {
             VTheme {
                 val navController = rememberNavController()
+                val database = Room.databaseBuilder(
+                    applicationContext,
+                    AppDatabase::class.java, "app-database"
+                ).build()
+                val movieDao = database.movieDao()
                 Box(modifier = Modifier.background(BackgroundScreenColor)) {
                     NavHost(
                         navController = navController ,

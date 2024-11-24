@@ -1,4 +1,4 @@
-package com.example.v.view.movie
+package com.example.v.view.superhero
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -20,6 +21,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +33,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.v.R
 import com.example.v.Screen
+import com.example.v.data.AppDatabase
 import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
@@ -46,13 +49,17 @@ import com.example.v.view.MovieTicketHeader
 import com.example.v.view.ReusableNavigationButton
 import com.example.v.view.ScoreCard
 import com.example.v.view.TextFieldInput
+import com.example.v.view.movie.SelectionBars
+import kotlinx.coroutines.delay
 
 @Composable
 fun MovieSuperHeroEasyMainScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
 ) {
-    val movieViewModel = remember { MovieViewModel() }
+    val context = LocalContext.current
+    val movieDao = remember { AppDatabase.getDatabase(context).movieDao() }
+    val movieViewModel = remember { MovieViewModel(movieDao) }
     val movieUiState by movieViewModel.movieUiState.collectAsState()
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
@@ -61,6 +68,7 @@ fun MovieSuperHeroEasyMainScreen(
     var gameOverText by remember { mutableStateOf("") }
     var gameOverColor by remember { mutableStateOf(lightGreen) }
     var isWin by remember { mutableStateOf(false) }
+    var showGameOver by remember { mutableStateOf(false) }
 
     val boxColor by remember { mutableStateOf(Color.White) }
 
@@ -77,6 +85,17 @@ fun MovieSuperHeroEasyMainScreen(
         gameOverColor = lightGreen
         isWin = true
     }
+
+    LaunchedEffect(isGameOver) {
+        if (isGameOver) {
+            delay(2000)
+            showGameOver = true
+        } else {
+            showGameOver = false
+        }
+    }
+
+
 
     Box(
         modifier
@@ -182,7 +201,7 @@ fun MovieSuperHeroEasyMainScreen(
             Alignment.Center
         ) {
             AnimatedVisibility(
-                visible = isGameOver
+                visible = showGameOver
             ) {
                 GameOver(
                     text = gameOverText,
@@ -198,7 +217,7 @@ fun MovieSuperHeroEasyMainScreen(
             Alignment.Center
         ) {
             AnimatedVisibility(
-                visible = isWin
+                visible = showGameOver
             ) {
                 SoundManager.win()
                 LottieAnimation(composition = confetti, iterations = 10)

@@ -17,6 +17,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +38,7 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.v.R
 import com.example.v.Screen
+import com.example.v.data.AppDatabase
 import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
@@ -52,13 +55,16 @@ import com.example.v.view.MovieTicketHeader
 import com.example.v.view.ReusableNavigationButton
 import com.example.v.view.ScoreCard
 import com.example.v.view.TextFieldInput
+import kotlinx.coroutines.delay
 
 @Composable
 fun MovieEasyMainScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
 ) {
-    val movieViewModel = remember { MovieViewModel() }
+    val context = LocalContext.current
+    val movieDao = remember { AppDatabase.getDatabase(context).movieDao() }
+    val movieViewModel = remember { MovieViewModel(movieDao) }
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
 
@@ -68,6 +74,7 @@ fun MovieEasyMainScreen(
     var isWin by remember { mutableStateOf(false) }
 
     var boxColor by remember { mutableStateOf(Color.White) }
+    var showGameOver by remember { mutableStateOf(false) }
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
@@ -81,6 +88,15 @@ fun MovieEasyMainScreen(
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
         isWin = true
+    }
+
+    LaunchedEffect(isGameOver) {
+        if (isGameOver) {
+            delay(2000)
+            showGameOver = true
+        } else {
+            showGameOver = false
+        }
     }
 
     Box(
@@ -175,7 +191,7 @@ fun MovieEasyMainScreen(
             Alignment.Center
         ) {
             AnimatedVisibility(
-                visible = isGameOver
+                visible = showGameOver
             ) {
                 GameOver(
                     text = gameOverText,
@@ -191,7 +207,7 @@ fun MovieEasyMainScreen(
             Alignment.Center
         ) {
             AnimatedVisibility(
-                visible = isWin
+                visible = showGameOver
             ) {
                 SoundManager.win()
                 LottieAnimation(composition = confetti, iterations = 10)

@@ -4,14 +4,19 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.v.data.MovieUiState
 import com.example.v.service.SoundManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
-class MovieViewModel: ViewModel() {
+
+class MovieViewModel(
+    private val movieDao: MovieDao
+): ViewModel() {
     private val _movieUiState = MutableStateFlow(MovieUiState())
     val movieUiState: StateFlow<MovieUiState> = _movieUiState.asStateFlow()
 
@@ -237,6 +242,50 @@ class MovieViewModel: ViewModel() {
         9 to "A thief shrinks to save the day",
     )
 
+    init {
+        // LOADING THE INITIAL STATE FROM DB
+        viewModelScope.launch {
+            movieDao.getItem(1).collect { state ->
+                _movieUiState.value = state ?: MovieUiState()
+            }
+        }
+    }
+
+    private fun saveStateToDatabase() { // FOR SAVING THE CURRENT STATE OF THE GAME IN THE DB
+        viewModelScope.launch {
+            movieDao.upsertMovie(_movieUiState.value)
+        }
+    }
+
+    fun resetDatabaseToDefaultState() { // RESET DB
+        val defaultState = MovieUiState() // Default state
+        _movieUiState.value = defaultState
+
+        viewModelScope.launch {
+            movieDao.deleteMovie(MovieUiState(id = 1)) // Remove current state
+            movieDao.upsertMovie(defaultState) // Save the default state
+        }
+    }
+
+    // Update user score
+    fun updateUserScore(newScore: Int) {
+        _movieUiState.value = _movieUiState.value.copy(userScore = newScore)
+
+        // Save changes to the database
+        saveStateToDatabase()
+    }
+
+
+// EDIT THIS FUNCTION THIS IS WRONG
+//    fun updateWordTileStorage(newTile: Int) {
+//        val updatedStorage = _movieUiState.value.wordTileStorage.toMutableSet()
+//        updatedStorage.add(newTile)
+//
+//        _movieUiState.value = _movieUiState.value.copy(wordTileStorage = updatedStorage)
+//
+//        // Save changes to the database
+//        saveStateToDatabase()
+//    }
 
     fun updateUserInput(newUserInput: String) {
         userInput = newUserInput.lowercase().replace("\\s".toRegex(), "")

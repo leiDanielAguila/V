@@ -5,8 +5,9 @@ import androidx.room.PrimaryKey
 
 
 @Entity
-data class MovieUiState (@PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+data class MovieUiState (
+    @PrimaryKey(autoGenerate = true)
+    val id: Int = 1, // default
     var userInput: String = "",
     var userScore:Int = 0,
     var wordTileStorage: MutableSet<Int> = mutableSetOf(),
