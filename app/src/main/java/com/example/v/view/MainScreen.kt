@@ -46,6 +46,8 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.v.R
 import com.example.v.Screen
+import com.example.v.data.AppDatabase
+import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.Lalezar
@@ -172,9 +174,14 @@ fun PlayGameButton(
 
 @Composable
 fun HowToPLayButton(modifier: Modifier = Modifier) {
+    val context = LocalContext.current
+    val movieDao = remember { AppDatabase.getDatabase(context).movieDao() }
+    val movieViewModel = remember { MovieViewModel(movieDao) }
     Box(
         modifier = Modifier
-            .clickable { /*TODO*/ SoundManager.clickSound() }
+            .clickable {
+                movieViewModel.resetDatabaseToDefaultState() // remove after
+                SoundManager.clickSound() }
             .clip(shape = RoundedCornerShape(20.dp))
             .background(differentBlack)
             .size(width = 250.dp, height = 90.dp),

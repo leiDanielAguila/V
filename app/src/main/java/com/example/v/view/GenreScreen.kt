@@ -49,7 +49,6 @@ fun GenreScreen(
     navController: NavController,
     font: FontFamily = Spenbeb,
 ) {
-
     var onClick by remember { mutableStateOf(false) }
     var easyScreen by remember { mutableStateOf<Screen?>(null) }
     var mediumScreen by remember { mutableStateOf<Screen?>(null) }
@@ -205,7 +204,9 @@ fun SciFiGenreButton(
     Card(
         modifier = Modifier
             .size(width = 300.dp, height = 93.dp)
-            .clickable { navController.navigate(Screen.CategoryScreen) },
+            .clickable {
+                navController.navigate(Screen.CategoryScreen)
+                       },
         colors = CardDefaults.cardColors(Color.LightGray),
         elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
     ) {

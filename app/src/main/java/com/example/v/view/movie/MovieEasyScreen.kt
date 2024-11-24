@@ -287,6 +287,7 @@ fun SelectionBars(
                 onClick = {
                     isSettingVisibleChange(!isSettingVisible)
                     SoundManager.clickSound()
+
                 }
             ) {
                 if (isSettingVisible) {
