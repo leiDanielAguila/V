@@ -19,14 +19,17 @@ class MovieViewModel: ViewModel() {
     internal val movieDisneyEasyGridCount = 12
     internal val movieDisneyMediumGridCount = 10
     internal val movieDisneyHardGridCount = 9
+    internal val movieSuperHeroEasyGridCount = 14
 
     internal val hintNoteCount = 10
     internal val hintNoteDisneyMedium = 6
     internal val hintNoteDisneyHard = 4
+    internal val hintNoteSuperHeroEasy = 10
 
     internal val gameTilesCount = 156
     internal val gameTilesDisneyMediumCount = 160
     internal val gameTilesDisneyHardCount = 98
+    internal val gameTilesSuperHeroEasyCount = 181
 
 
     private val scoreIncrease = 10
@@ -172,6 +175,69 @@ class MovieViewModel: ViewModel() {
         3 to "A magical family, a special house, and the power of embracing one’s uniqueness."
     )
 
+    val movieSuperHeroEasyTiles = mapOf( 22 to 'i', 36 to 'r', 50 to 'o', 64 to 'n', 78 to 'm', 92 to 'a', 106 to 'n',
+        33 to 'e', 34 to 't', 35 to 'e', 36 to 'r', 37 to 'n', 38 to 'a', 39 to 'l', 40 to 's',
+        68 to 's', 82 to 'p', 96 to 'i', 110 to 'd', 124 to 'e', 138 to 'r', 152 to 'm', 166 to 'a', 180 to 'n',
+        162 to 'b', 163 to 'a', 164 to 't', 165 to 'm', 166 to 'a', 167 to 'n', 134 to 'j', 135 to 'o', 136 to 'k', 137 to 'e',
+        113 to 'h', 114 to 'e', 115 to 'l', 116 to 'l', 117 to 'b', 118 to 'o', 119 to 'y', 90 to 't', 104 to 'h', 132 to 'r',
+        72 to 's', 86 to 'u', 100 to 'p', 128 to 'r', 142 to 'm', 156 to 'a', 170 to 'n',
+        88 to 'a', 89 to 'n', 91 to 'm', 93 to 'n', 61 to 'a', 62 to 'v', 63 to 'e', 65 to 'g', 66 to 'e', 67 to 'r',
+    )
+
+    val movieSuperHeroEasyNumberTiles = mapOf(8 to "1", 32 to "6", 60 to "2", 58 to "10", 112 to "9", 133 to "7", 161 to "8", 54 to "4", 76 to "5", 87 to "3")
+
+    private val ironman: Set<Int> = setOf(22, 36, 50, 64, 78, 92, 106)
+    private val avengers: Set<Int> = setOf(61, 62, 63, 64, 65, 66, 67, 68)
+    private val eternals: Set<Int> = setOf(33, 34, 35, 36, 37, 38, 39, 40)
+    private val spiderman: Set<Int> = setOf(68, 82, 96, 110, 124, 138, 152, 166, 180)
+    private val thor: Set<Int> = setOf(90, 104, 118, 132)
+    private val joker: Set<Int> = setOf(134, 135, 136, 137, 138)
+    private val batman: Set<Int> = setOf(162, 163, 164, 165, 166, 167)
+    private val hellboy: Set<Int> = setOf(113, 114, 115, 116, 117, 118, 119)
+    private val superman: Set<Int> = setOf(72, 86, 100, 114, 128, 142, 156, 170)
+    private val antman: Set<Int> = setOf(88 ,89, 90, 91, 92, 93)
+
+    val movieSuperHeroEasyWords = mapOf(
+        ironman to "ironman",
+        avengers to "avengers",
+        eternals to "eternals",
+        spiderman to "spiderman",
+        thor to "thor",
+        joker to "joker",
+        batman to "batman",
+        hellboy to "hellboy",
+        superman to "superman",
+        antman to "antman"
+    )
+
+
+    val movieSuperHeroYears = mapOf(
+        0 to "2008",
+        1 to "2012",
+        2 to "2021",
+        3 to "2002",
+        4 to "2002",
+        5 to "2011",
+        6 to "2019",
+        7 to "2011",
+        8 to "2012",
+        9 to "2015",
+    )
+
+    val movieSuperHeroHints = mapOf(
+        0 to "A billionaire builds a suit to save the world",
+        1 to "Earth’s mightiest heroes assemble",
+        2 to "Immortal beings protect humanity",
+        3 to "Teen with spider powers fights crime",
+        4 to "God of Thunder proves himself worthy",
+        5 to "The origin of Gotham's clown prince of crime",
+        6 to "A vigilante protects Gotham City",
+        7 to "A demon fights to save humanity",
+        8 to "An alien hero defends Earth",
+        9 to "A thief shrinks to save the day",
+    )
+
+
     fun updateUserInput(newUserInput: String) {
         userInput = newUserInput.lowercase().replace("\\s".toRegex(), "")
     }
@@ -263,4 +329,6 @@ class MovieViewModel: ViewModel() {
         usedWords.clear()
         wordTileStorage.clear()
     }
+
+
 }

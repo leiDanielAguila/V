@@ -23,6 +23,7 @@ import com.example.v.view.MainScreen
 import com.example.v.view.movie.MovieDisneyHardMainScreen
 import com.example.v.view.movie.MovieDisneyMediumMainScreen
 import com.example.v.view.movie.MovieEasyMainScreen
+import com.example.v.view.movie.MovieSuperHeroEasyMainScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +36,7 @@ class MainActivity : ComponentActivity() {
                 Box(modifier = Modifier.background(BackgroundScreenColor)) {
                     NavHost(
                         navController = navController ,
-                        startDestination = Screen.MovieDisneyHard.route, // change when done testing
+                        startDestination = Screen.MovieSuperHeroEasy.route, // change when done testing
                         enterTransition = { fadeIn(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) },
                         exitTransition = { fadeOut(animationSpec = tween(2000, easing = LinearOutSlowInEasing)) }
                     ) {
@@ -56,6 +57,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Screen.GenreScreen.route) {
                             GenreScreen(navController = navController)
+                        }
+                        composable(Screen.MovieSuperHeroEasy.route) {
+                            MovieSuperHeroEasyMainScreen(navController = navController)
                         }
                     }
                 }
@@ -80,5 +84,6 @@ enum class Screen(val route: String) {
     MovieEasy("MovieEasy"),
     MovieDisneyMedium("MovieDisneyMedium"),
     MovieDisneyHard("MovieDisneyHard"),
-    GenreScreen("GenreScreen")
+    GenreScreen("GenreScreen"),
+    MovieSuperHeroEasy("MovieSuperHeroEasy")
 }

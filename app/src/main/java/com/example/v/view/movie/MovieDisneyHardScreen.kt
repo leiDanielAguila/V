@@ -62,7 +62,7 @@ fun MovieDisneyHardMainScreen(
     var gameOverColor by remember { mutableStateOf(lightGreen) }
     var isWin by remember { mutableStateOf(false) }
 
-    var boxColor by remember { mutableStateOf(Color.White) }
+    val boxColor by remember { mutableStateOf(Color.White) }
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
@@ -113,7 +113,7 @@ fun MovieDisneyHardMainScreen(
                 .padding(12.dp),
             Alignment.TopCenter
         ) {
-            MovieTicketHeader(header = "Disney")
+            MovieTicketHeader(header = "Disney", font = disnep)
         }
 
         Box(

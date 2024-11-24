@@ -51,6 +51,28 @@ fun GenreScreen(
 ) {
 
     var onClick by remember { mutableStateOf(false) }
+    var easyScreen by remember { mutableStateOf<Screen?>(null) }
+    var mediumScreen by remember { mutableStateOf<Screen?>(null) }
+    var hardScreen by remember { mutableStateOf<Screen?>(null) }
+
+    var animationClick by remember { mutableStateOf(false) }
+    var scifiClick by remember { mutableStateOf(false) }
+    var superheroClick by remember { mutableStateOf(false) }
+
+    if (animationClick) {
+        easyScreen = Screen.MovieEasy
+        mediumScreen = Screen.MovieDisneyMedium
+        hardScreen = Screen.MovieDisneyHard
+    } else if (scifiClick) {
+        easyScreen = null
+        mediumScreen = null
+        hardScreen = null
+    } else if (superheroClick) {
+        easyScreen = Screen.MovieSuperHeroEasy
+        mediumScreen = null
+        hardScreen = null
+    }
+
 
     Box(
         modifier
@@ -98,10 +120,21 @@ fun GenreScreen(
                 AnimationGenreButton(
                     font = disnep,
                     onClick = onClick,
-                    onClickChange = ({onClick = it})
+                    onClickChange = ({onClick = it}),
+                    animationClick = animationClick,
+                    animationClickChange = ({animationClick = it})
                 )
-                SciFiGenreButton(font = scifi, navController)
-                SuperheroGenreButton(font = marvel, navController)
+                SciFiGenreButton(
+                    font = scifi,
+                    navController
+                )
+                SuperheroGenreButton(
+                    font = marvel,
+                    onClick = onClick,
+                    onClickChange = ({onClick = it}),
+                    superheroClick = superheroClick,
+                    superheroClickChange = ({superheroClick = it})
+                )
             }
         }
 
@@ -109,7 +142,10 @@ fun GenreScreen(
             DifficultySelector(
                 onClick = onClick,
                 onClickChange = ({ onClick = it }),
-                navController = navController
+                navController = navController,
+                easyScreen = easyScreen,
+                mediumScreen = mediumScreen,
+                hardScreen = hardScreen
             )
         }
     }
@@ -119,12 +155,17 @@ fun GenreScreen(
 fun AnimationGenreButton(
     font: FontFamily,
     onClick: Boolean,
-    onClickChange: (Boolean) -> Unit
+    onClickChange: (Boolean) -> Unit,
+    animationClick: Boolean,
+    animationClickChange: (Boolean) -> Unit,
 ) {
     Card(
         modifier = Modifier
             .size(width = 300.dp, height = 93.dp)
-            .clickable { onClickChange(!onClick) },
+            .clickable {
+                animationClickChange(!animationClick)
+                onClickChange(!onClick)
+                       },
         colors = CardDefaults.cardColors(lightBlue),
         elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
     ) {
@@ -198,12 +239,18 @@ fun SciFiGenreButton(
 @Composable
 fun SuperheroGenreButton(
     font: FontFamily,
-    navController: NavController
+    onClick: Boolean,
+    onClickChange: (Boolean) -> Unit,
+    superheroClick: Boolean,
+    superheroClickChange:(Boolean) -> Unit,
 ) {
     Card(
         modifier = Modifier
             .size(width = 300.dp, height = 93.dp)
-            .clickable { navController.navigate(Screen.CategoryScreen) },
+            .clickable {
+                superheroClickChange(!superheroClick)
+                onClickChange(!onClick)
+                       },
         colors = CardDefaults.cardColors(darkRed),
         elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
     ) {

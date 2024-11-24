@@ -71,7 +71,6 @@ import com.example.v.ui.theme.anotherWhite
 import com.example.v.ui.theme.cream
 import com.example.v.ui.theme.darkGreen
 import com.example.v.ui.theme.darkYellow
-import com.example.v.ui.theme.disnep
 import com.example.v.ui.theme.heartRed
 import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.lightRed
@@ -107,7 +106,10 @@ fun DifficultySelector(
     modifier: Modifier = Modifier,
     onClick: Boolean,
     onClickChange: (Boolean) -> Unit,
-    navController: NavController
+    navController: NavController,
+    easyScreen: Screen?,
+    mediumScreen: Screen?,
+    hardScreen: Screen?
 ) {
     AnimatedVisibility(
         visible = onClick,
@@ -157,7 +159,9 @@ fun DifficultySelector(
                 Button(
                     onClick = {
                         SoundManager.clickSound()
-                        navController.navigate(Screen.MovieEasy.route)
+                        if (easyScreen != null) {
+                            navController.navigate(easyScreen.route)
+                        }
                     },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),
                     colors = ButtonDefaults.buttonColors(lightGreen)
@@ -167,7 +171,12 @@ fun DifficultySelector(
                 }
 
                 Button(
-                    onClick = { navController.navigate(Screen.MovieDisneyMedium.route) },
+                    onClick = {
+                        SoundManager.clickSound()
+                        if (mediumScreen != null) {
+                            navController.navigate(mediumScreen.route)
+                        }
+                    },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),
                     colors = ButtonDefaults.buttonColors(darkYellow)
                 ) {
@@ -176,7 +185,12 @@ fun DifficultySelector(
                 }
 
                 Button(
-                    onClick = { navController.navigate(Screen.MovieDisneyHard.route) },
+                    onClick = {
+                        SoundManager.clickSound()
+                        if (hardScreen != null) {
+                            navController.navigate(hardScreen.route)
+                        }
+                    },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),
                     colors = ButtonDefaults.buttonColors(Color.Red)
                 ) {
@@ -316,7 +330,8 @@ fun ScoreCard(
 @Composable
 fun MovieTicketHeader(
     modifier: Modifier = Modifier,
-    header: String
+    header: String,
+    font: FontFamily
 ) {
     Box(
         modifier.size(width = 168.dp, height = 113.dp),
@@ -331,7 +346,7 @@ fun MovieTicketHeader(
 
         Text(
             text = header,
-            fontFamily = disnep,
+            fontFamily = font,
             fontSize = 32.sp,
             color = Color.White
         )

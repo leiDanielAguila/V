@@ -113,7 +113,7 @@ fun MovieDisneyMediumMainScreen(
                 .padding(12.dp),
             Alignment.TopCenter
         ) {
-            MovieTicketHeader(header = "Disney")
+            MovieTicketHeader(header = "Disney", font = disnep)
         }
 
         Box(

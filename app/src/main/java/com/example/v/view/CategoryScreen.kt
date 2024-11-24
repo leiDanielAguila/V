@@ -88,15 +88,7 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
             TechnologyCard()
         }
 
-        Column( // difficulty selector
-            modifier = Modifier.fillMaxSize()
-        ) {
-            DifficultySelector(
-                onClick = onClick,
-                onClickChange = ({ onClick = it }),
-                navController = navController
-            )
-        }
+
     }
 }
 
