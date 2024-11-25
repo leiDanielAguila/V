@@ -205,6 +205,7 @@ fun DifficultySelector(
 
 @Composable
 fun GameOver(
+    screen: Screen,
     onClick: Boolean,
     onClickChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
@@ -235,13 +236,14 @@ fun GameOver(
             ShowLevelButton(
                 onClickLevelDone = onClick,
                 onClickLevelDoneChange = onClickChange,
-                navController = navController
+                navController = navController,
+                screen = screen
             )
 
 
             ReusableNavigationButton(
                 Screen.CategoryScreen,
-                textInButton = "Next",
+                textInButton = "Exit",
                 20.sp,
                 navController = navController
             )
@@ -251,13 +253,14 @@ fun GameOver(
 
 @Composable
 fun ShowLevelButton(
+    screen: Screen,
     onClickLevelDone: Boolean,
     onClickLevelDoneChange: (Boolean) -> Unit,
     navController: NavController,
     font: FontFamily = Spenbeb) {
     Button(
         onClick = {
-            navController.navigate(Screen.MovieDisneyHard.route)
+            navController.navigate(screen.route)
             onClickLevelDoneChange(!onClickLevelDone)
         },
         elevation = ButtonDefaults.elevatedButtonElevation(30.dp),

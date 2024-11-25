@@ -95,9 +95,7 @@ fun MovieDisneyHardMainScreen(
         }
     }
 
-    if(showGameOver) {
-        movieViewModel.saveStateToDatabase()
-    }
+
 
 
 
@@ -216,7 +214,8 @@ fun MovieDisneyHardMainScreen(
                     onClick = onLevelDone,
                     onClickChange = {
                         onLevelDone = it
-                    }
+                    },
+                    screen = Screen.MovieDisneyHard
                 )
             }
         }

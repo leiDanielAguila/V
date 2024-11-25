@@ -102,9 +102,7 @@ fun MovieEasyMainScreen(
         }
     }
 
-    if(showGameOver) {
-        movieViewModel.saveStateToDatabase()
-    }
+
 
     Box(
         modifier
@@ -216,7 +214,8 @@ fun MovieEasyMainScreen(
                     font = Spenbeb,
                     color = gameOverColor,
                     onClick = onLevelDone,
-                    onClickChange = {onLevelDone = it}
+                    onClickChange = {onLevelDone = it},
+                    screen = Screen.MovieEasy
                 )
             }
         }

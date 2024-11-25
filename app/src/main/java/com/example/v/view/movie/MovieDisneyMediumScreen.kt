@@ -93,9 +93,7 @@ fun MovieDisneyMediumMainScreen(
         }
     }
 
-    if(showGameOver) {
-        movieViewModel.saveStateToDatabase()
-    }
+
 
     Box(
         modifier
@@ -209,7 +207,8 @@ fun MovieDisneyMediumMainScreen(
                     onClick = onLevelDone,
                     onClickChange = {
                         onLevelDone = it
-                    }
+                    },
+                    screen = Screen.MovieDisneyMedium
                 )
             }
         }

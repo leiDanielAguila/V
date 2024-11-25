@@ -40,6 +40,8 @@ class MovieViewModel(
     internal val gameTilesDisneyHardCount = 98
     internal val gameTilesSuperHeroEasyCount = 181
 
+    private var isCorrect = false
+
 
     private val scoreIncrease = 10
     private var updatedScore = 0
@@ -264,8 +266,11 @@ class MovieViewModel(
     private fun mapUiStateToMovieState(uiState: MovieUiState): MovieState {
         Log.d("Mapping", "Mapping UiState: $uiState")
 
-        val currentScore = _movieState.value.userScore // Get the current score from _movieState
-        val newScore = currentScore + uiState.userScore
+        val newScore = if (isCorrect) {
+            _movieState.value.userScore + scoreIncrease
+        } else {
+            _movieState.value.userScore
+        }
         val hardTileStorage = _movieState.value.disneyHardTileStorage + uiState.disneyHardTileStorage
         val mediumTileStorage = _movieState.value.disneyMediumTileStorage + uiState.disneyMediumTileStorage
         val easyTileStorage = _movieState.value.disneyEasyTileStorage + uiState.disneyEasyTileStorage
@@ -350,6 +355,7 @@ class MovieViewModel(
             && userInput !in usedWords) {
             updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
             usedWords.add(userInput)
+            isCorrect = true
             findWord(movieWords, movieID)
             updatedWordCount = _movieUiState.value.wordCount.plus(1)
             updateState()
@@ -362,8 +368,10 @@ class MovieViewModel(
             || set in movieWords.keys
             ) {
             SoundManager.usedWord()
+            isCorrect = false
             clearUserInput()
         } else {
+            isCorrect = false
             SoundManager.wrongSound()
             clearUserInput()
             removeOneLife()
@@ -447,7 +455,8 @@ class MovieViewModel(
                 disneyEasyTileStorage = disneyMediumTileStorage,
                 disneyMediumTileStorage = disneyMediumTileStorage,
                 superheroEasyTileStorage = superheroEasyTileStorage,
-                wordCount = updatedWordCount
+                wordCount = updatedWordCount,
+                isCorrect = isCorrect,
             )
         }
     }

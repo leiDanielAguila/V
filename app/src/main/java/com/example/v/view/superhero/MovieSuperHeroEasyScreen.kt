@@ -95,9 +95,7 @@ fun MovieSuperHeroEasyMainScreen(
         }
     }
 
-    if(showGameOver) {
-        movieViewModel.saveStateToDatabase()
-    }
+
 
     Box(
         modifier
@@ -212,7 +210,8 @@ fun MovieSuperHeroEasyMainScreen(
                     font = Spenbeb,
                     color = gameOverColor,
                     onClick = onLevelDone,
-                    onClickChange = {onLevelDone = it}
+                    onClickChange = {onLevelDone = it},
+                    screen = Screen.MovieSuperHeroEasy
                 )
             }
         }
