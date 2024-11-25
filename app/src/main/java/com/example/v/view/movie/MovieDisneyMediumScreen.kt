@@ -56,7 +56,7 @@ fun MovieDisneyMediumMainScreen(
     navController: NavController,
 ) {
     val context = LocalContext.current
-    val movieDao = remember { AppDatabase.getDatabase(context).movieDao() }
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
     val movieUiState by movieViewModel.movieUiState.collectAsState()
 
@@ -162,7 +162,7 @@ fun MovieDisneyMediumMainScreen(
         }
 
         Box(
-            modifier.fillMaxSize().padding(bottom = 90.dp),
+            modifier.fillMaxSize().padding(bottom = 60.dp),
             Alignment.BottomCenter
         ) {
             Column(
@@ -178,18 +178,19 @@ fun MovieDisneyMediumMainScreen(
                     movieTiles = movieViewModel.movieDisneyMediumTiles,
                     movieNumberTiles = movieViewModel.movieDisneyMediumNumberTiles,
                     gridCount = movieViewModel.movieDisneyMediumGridCount,
-                    boxColor = boxColor
+                    boxColor = boxColor,
+                    movieID = 2
                 )
                 Spacer(modifier.height(22.dp))
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
-                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieDisneyMediumWords)
+                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieDisneyMediumWords,2)
                     },
                 )
             }
         }
-
+        var  onLevelDone by remember { mutableStateOf(false) }
         Box(
             modifier.fillMaxSize(),
             Alignment.Center
@@ -201,7 +202,11 @@ fun MovieDisneyMediumMainScreen(
                     text = gameOverText,
                     navController = navController,
                     font = Spenbeb,
-                    color = gameOverColor
+                    color = gameOverColor,
+                    onClick = onLevelDone,
+                    onClickChange = {
+                        onLevelDone = it
+                    }
                 )
             }
         }

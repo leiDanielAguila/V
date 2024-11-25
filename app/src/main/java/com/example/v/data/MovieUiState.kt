@@ -6,11 +6,15 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class MovieUiState (
-    @PrimaryKey(autoGenerate = true)
-    val id: Int = 1, // default
+    @PrimaryKey
+    val id: Int = 1,
     var userInput: String = "",
     var userScore:Int = 0,
     var wordTileStorage: MutableSet<Int> = mutableSetOf(),
+    var disneyHardTileStorage: MutableSet<Int> = mutableSetOf(),
+    var disneyMediumTileStorage: MutableSet<Int> = mutableSetOf(),
+    var disneyEasyTileStorage: MutableSet<Int> = mutableSetOf(),
+    var superheroEasyTileStorage: MutableSet<Int> = mutableSetOf(),
     var wordCount: Int = 0,
     var ifGameIsOver: Boolean = false,
     var isGameOverAndWin: Boolean = false,

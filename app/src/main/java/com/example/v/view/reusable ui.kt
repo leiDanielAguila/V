@@ -205,6 +205,8 @@ fun DifficultySelector(
 
 @Composable
 fun GameOver(
+    onClick: Boolean,
+    onClickChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     text: String,
     color: Color,
@@ -212,7 +214,8 @@ fun GameOver(
     navController: NavController
 ) {
     Box(
-        modifier.size(width = 250.dp, height = 241.dp)
+        modifier
+            .size(width = 250.dp, height = 241.dp)
             .clip(RoundedCornerShape(20.dp))
             .background(color)
 
@@ -229,6 +232,13 @@ fun GameOver(
                 fontFamily = font
             )
 
+            ShowLevelButton(
+                onClickLevelDone = onClick,
+                onClickLevelDoneChange = onClickChange,
+                navController = navController
+            )
+
+
             ReusableNavigationButton(
                 Screen.CategoryScreen,
                 textInButton = "Next",
@@ -236,6 +246,29 @@ fun GameOver(
                 navController = navController
             )
         }
+    }
+}
+
+@Composable
+fun ShowLevelButton(
+    onClickLevelDone: Boolean,
+    onClickLevelDoneChange: (Boolean) -> Unit,
+    navController: NavController,
+    font: FontFamily = Spenbeb) {
+    Button(
+        onClick = {
+            navController.navigate(Screen.MovieDisneyHard.route)
+            onClickLevelDoneChange(!onClickLevelDone)
+        },
+        elevation = ButtonDefaults.elevatedButtonElevation(30.dp),
+        colors = ButtonDefaults.buttonColors(lightRed)
+    ) {
+        Text(
+            text = "Show Level",
+            color = onyx,
+            fontSize = 18.sp,
+            fontFamily = font
+        )
     }
 }
 
@@ -365,9 +398,26 @@ fun GameTiles(
     textBoxHeight: Dp = 30.dp,
     textBoxWidth: Dp = 20.dp,
     gridCount: Int, // for the grid count inside the box {the width}
-    boxColor: Color
+    boxColor: Color,
+    movieID: Int,
 ) {
     val movieUiState by movieViewModel.movieUiState.collectAsState()
+    val disneyEasy = movieUiState.disneyEasyTileStorage
+    val disneyMedium = movieUiState.disneyMediumTileStorage
+    val disneyHard = movieUiState.disneyHardTileStorage
+    val superHeroEasy = movieUiState.superheroEasyTileStorage
+
+    var set: MutableSet<Int> = mutableSetOf()
+
+    if (movieID == 1) {
+        set = disneyEasy.toMutableSet()
+    } else if (movieID == 2) {
+        set = disneyMedium.toMutableSet()
+    } else if (movieID == 3) {
+        set = disneyHard.toMutableSet()
+    } else if (movieID == 4) {
+        set = superHeroEasy
+    }
     Surface(
         modifier
             .size(width = outerBoxWidth, height = outerBoxHeight),
@@ -383,7 +433,7 @@ fun GameTiles(
                 .padding(12.dp)
         ) {
             items(count = tilesCount) {
-                if (it in movieTiles && it !in movieUiState.wordTileStorage) {
+                if (it in movieTiles && it !in set) {
                     Surface(
                         modifier = Modifier.size(width = textBoxWidth, height = textBoxHeight),
                         color = boxColor,
@@ -424,7 +474,7 @@ fun GameTiles(
                             )
                         }
                     }
-                } else if (it in movieTiles && it in movieUiState.wordTileStorage) {
+                } else if (it in movieTiles && it in set) {
                     Surface(
                         modifier = Modifier.size(width = textBoxWidth, height = textBoxHeight),
                         color = Color.Green,
@@ -436,7 +486,7 @@ fun GameTiles(
                             horizontalArrangement = Arrangement.Center,
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (it in movieUiState.wordTileStorage) {
+                            if (it in set) {
                                 Text(
                                     text = "${movieTiles[it]}",
                                     color = Color.Black,
@@ -444,7 +494,6 @@ fun GameTiles(
                                 )
                             }
                         }
-
                     }
                 }
             }

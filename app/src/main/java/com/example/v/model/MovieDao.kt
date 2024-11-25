@@ -4,10 +4,11 @@ import androidx.room.Dao
 import androidx.room.Delete
 import androidx.room.Query
 import androidx.room.Upsert
+import com.example.v.data.MovieState
 import com.example.v.data.MovieUiState
 import kotlinx.coroutines.flow.Flow
 
-@Dao
+@Dao // do not use
 interface MovieDao {
     @Upsert
     suspend fun upsertMovie(movieUiState: MovieUiState)
@@ -27,5 +28,20 @@ interface MovieRepository {
     suspend fun deleteItem(movieUiState: MovieUiState)
     fun getAllItems(): Flow<List<MovieUiState>>
     fun getItem(id: Int): Flow<MovieUiState>
+}
+
+@Dao
+interface NewMovieDao {
+    @Upsert
+    suspend fun upsertMovie(movieState: MovieState)
+
+    @Delete
+    suspend fun deleteMovie(movieState: MovieState)
+
+    @Query("SELECT * from moviestate WHERE id = :id")
+    fun getMovieItem(id: Int): Flow<MovieState>
+
+    @Query("SELECT * from moviestate ORDER BY id ASC")
+    fun getAllMovieItems(): Flow<List<MovieState>>
 }
 

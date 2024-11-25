@@ -57,11 +57,13 @@ fun MovieDisneyHardMainScreen(
     navController: NavController,
 ) {
     val context = LocalContext.current
-    val movieDao = remember { AppDatabase.getDatabase(context).movieDao() }
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
     val movieUiState by movieViewModel.movieUiState.collectAsState()
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
+
+    var  onLevelDone by remember { mutableStateOf(false) }
 
     var isGameOver by remember { mutableStateOf(false) }
     var gameOverText by remember { mutableStateOf("") }
@@ -92,6 +94,10 @@ fun MovieDisneyHardMainScreen(
         } else {
             showGameOver = false
         }
+    }
+
+    if (showGameOver) {
+        onLevelDone = true
     }
 
     Box(
@@ -180,13 +186,14 @@ fun MovieDisneyHardMainScreen(
                     movieTiles = movieViewModel.movieDisneyHardTiles,
                     movieNumberTiles = movieViewModel.movieDisneyHardNumberTiles,
                     gridCount = movieViewModel.movieDisneyHardGridCount,
-                    boxColor = boxColor
+                    boxColor = boxColor,
+                    movieID = 3
                 )
                 Spacer(modifier.height(22.dp))
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
-                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieDisneyHardWords)
+                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieDisneyHardWords,3)
                         movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords)
                     },
                 )
@@ -204,7 +211,11 @@ fun MovieDisneyHardMainScreen(
                     text = gameOverText,
                     navController = navController,
                     font = Spenbeb,
-                    color = gameOverColor
+                    color = gameOverColor,
+                    onClick = onLevelDone,
+                    onClickChange = {
+                        onLevelDone = it
+                    }
                 )
             }
         }

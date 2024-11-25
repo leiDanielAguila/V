@@ -39,7 +39,6 @@ class MainActivity : ComponentActivity() {
                     applicationContext,
                     AppDatabase::class.java, "app-database"
                 ).build()
-                val movieDao = database.movieDao()
                 Box(modifier = Modifier.background(BackgroundScreenColor)) {
                     NavHost(
                         navController = navController ,

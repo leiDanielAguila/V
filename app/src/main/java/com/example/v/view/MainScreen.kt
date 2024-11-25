@@ -175,12 +175,12 @@ fun PlayGameButton(
 @Composable
 fun HowToPLayButton(modifier: Modifier = Modifier) {
     val context = LocalContext.current
-    val movieDao = remember { AppDatabase.getDatabase(context).movieDao() }
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
     Box(
         modifier = Modifier
             .clickable {
-                movieViewModel.resetDatabaseToDefaultState() // remove after
+                // movieViewModel.resetDatabaseToDefaultState() // remove after
                 SoundManager.clickSound() }
             .clip(shape = RoundedCornerShape(20.dp))
             .background(differentBlack)

@@ -4,18 +4,16 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.example.v.data.MovieUiState
 import com.example.v.service.SoundManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 
 class MovieViewModel(
-    private val movieDao: MovieDao
+    private val movieDao: NewMovieDao
 ): ViewModel() {
     private val _movieUiState = MutableStateFlow(MovieUiState())
     val movieUiState: StateFlow<MovieUiState> = _movieUiState.asStateFlow()
@@ -43,6 +41,10 @@ class MovieViewModel(
 
     private var usedWords: MutableSet<String> = mutableSetOf()
     private var wordTileStorage: MutableSet<Int> = mutableSetOf()
+    private var disneyHardTileStorage: MutableSet<Int> = mutableSetOf()
+    private var disneyEasyTileStorage: MutableSet<Int> = mutableSetOf()
+    private var disneyMediumTileStorage: MutableSet<Int> = mutableSetOf()
+    private var superheroEasyTileStorage: MutableSet<Int> = mutableSetOf()
 
     var userInput by mutableStateOf("")
 
@@ -242,43 +244,42 @@ class MovieViewModel(
         9 to "A thief shrinks to save the day",
     )
 
-    init {
-        // LOADING THE INITIAL STATE FROM DB
-        viewModelScope.launch {
-            movieDao.getItem(1).collect { state ->
-                _movieUiState.value = state ?: MovieUiState()
-            }
-        }
-    }
+//    init {
+//        // LOADING THE INITIAL STATE FROM DB
+//        viewModelScope.launch {
+//            movieDao.getItem(1).collect { state ->
+//                _movieUiState.value = state ?: MovieUiState()
+//            }
+//        }
+//    }
 
-    private fun saveStateToDatabase() {
-        viewModelScope.launch {
-            // Extract only the updated fields
-            val updatedMovieUiState = MovieUiState(
-                id = _movieUiState.value.id, // Ensure we keep the same ID for identification
-                wordTileStorage = _movieUiState.value.wordTileStorage,
-                userScore = _movieUiState.value.userScore
-            )
+//    private fun saveStateToDatabase() {
+//        viewModelScope.launch {
+//            // Extract only the updated fields
+//            val updatedMovieUiState = MovieUiState(
+//                id = _movieUiState.value.id, // Ensure we keep the same ID for identification
+//                wordTileStorage = _movieUiState.value.wordTileStorage,
+//                userScore = _movieUiState.value.userScore
+//            )
+//
+//            // Save only the updated fields to the database
+//            movieDao.upsertMovie(updatedMovieUiState)
+//        }
+//    }
 
-            // Save only the updated fields to the database
-            movieDao.upsertMovie(updatedMovieUiState)
-        }
-    }
-
-    fun resetDatabaseToDefaultState() { // RESET DB
-
-        viewModelScope.launch {
-            movieDao.deleteMovie(MovieUiState(id = 1)) // Remove current state
-        }
-    }
+//    fun resetDatabaseToDefaultState() { // RESET DB
+//        viewModelScope.launch {
+//            movieDao.deleteMovie(MovieUiState(id = 1)) // Remove current state
+//        }
+//    }
 
     // Update user score
-    private fun updateUserScore(newScore: Int) {
-        _movieUiState.value = _movieUiState.value.copy(userScore = newScore)
-
-        // Save changes to the database
-        saveStateToDatabase()
-    }
+//    private fun updateUserScore(newScore: Int) {
+//        _movieUiState.value = _movieUiState.value.copy(userScore = newScore)
+//
+//        // Save changes to the database
+//        saveStateToDatabase()
+//    }
 
     fun updateUserInput(newUserInput: String) {
         userInput = newUserInput.lowercase().replace("\\s".toRegex(), "")
@@ -290,16 +291,17 @@ class MovieViewModel(
 
     fun checkUserInput(
         movieWords: Map<Set<Int>, String>,
+        movieID: Int
     ) {
         if (userInput in movieWords.values
             && userInput !in usedWords) {
             updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
             usedWords.add(userInput)
-//          findWord(movieWords)
-            updateWordTileStorage(movieWords, userInput)
-            updatedWordCount = _movieUiState.value.wordCount.plus(movieWords.count())
+            findWord(movieWords, movieID)
+            //updateWordTileStorage(movieWords, userInput)
+            updatedWordCount = _movieUiState.value.wordCount.plus(1)
             updateState()
-            updateUserScore(updatedScore)
+            //updateUserScore(updatedScore)
             SoundManager.correctSound()
             clearUserInput()
         } else if (userInput in usedWords || userInput.isBlank()) {
@@ -332,32 +334,42 @@ class MovieViewModel(
 
 
     private fun findWord(
-        movieWords: Map<Set<Int>, String>
+        movieWords: Map<Set<Int>, String>,
+        movieID: Int
     ) {
         for ((key, value) in movieWords) {
-            if (userInput == value) {
-                wordTileStorage.addAll(key)
+            if (userInput == value && movieID == 3) {
+                disneyHardTileStorage.addAll(key)
+            }
+            if (userInput == value && movieID == 2) {
+                disneyMediumTileStorage.addAll(key)
+            }
+            if (userInput == value && movieID == 1) {
+                disneyEasyTileStorage.addAll(key)
+            }
+            if (userInput == value && movieID == 4) {
+                superheroEasyTileStorage.addAll(key)
             }
         }
     }
 
-    private fun updateWordTileStorage(movieWords: Map<Set<Int>, String>, userInput: String) {
-        // Copy the current storage to a mutable set
-        val updatedStorage = _movieUiState.value.wordTileStorage.toMutableSet()
-
-        // Check if the user input matches any word and update the storage
-        for ((key, value) in movieWords) {
-            if (userInput == value) {
-                updatedStorage.addAll(key) // Add matching tiles to storage
-            }
-        }
-
-        // Update the UI state with the new storage
-        _movieUiState.value = _movieUiState.value.copy(wordTileStorage = updatedStorage)
-
-        // Save changes to the database
-        saveStateToDatabase()
-    }
+//    private fun updateWordTileStorage(movieWords: Map<Set<Int>, String>, userInput: String) {
+//        // Copy the current storage to a mutable set
+//        val updatedStorage = _movieUiState.value.wordTileStorage.toMutableSet()
+//
+//        // Check if the user input matches any word and update the storage
+//        for ((key, value) in movieWords) {
+//            if (userInput == value) {
+//                updatedStorage.addAll(key) // Add matching tiles to storage
+//            }
+//        }
+//
+//        // Update the UI state with the new storage
+//        _movieUiState.value = _movieUiState.value.copy(wordTileStorage = updatedStorage)
+//
+//        // Save changes to the database
+//        saveStateToDatabase()
+//    }
 
 
     private fun removeOneLife() {
@@ -372,8 +384,11 @@ class MovieViewModel(
     private fun updateState() {
         _movieUiState.update { currentState ->
             currentState.copy(
-                //userScore = updatedScore,
-                //wordTileStorage = wordTileStorage,
+                userScore = updatedScore,
+                disneyHardTileStorage = disneyHardTileStorage,
+                disneyEasyTileStorage = disneyMediumTileStorage,
+                disneyMediumTileStorage = disneyMediumTileStorage,
+                superheroEasyTileStorage = superheroEasyTileStorage,
                 wordCount = updatedWordCount
             )
         }

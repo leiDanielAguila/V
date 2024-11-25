@@ -63,7 +63,7 @@ fun MovieEasyMainScreen(
     navController: NavController,
 ) {
     val context = LocalContext.current
-    val movieDao = remember { AppDatabase.getDatabase(context).movieDao() }
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
@@ -174,18 +174,19 @@ fun MovieEasyMainScreen(
                     tilesCount = movieViewModel.gameTilesCount,
                     movieNumberTiles = movieViewModel.movieEasyNumberTiles,
                     gridCount = movieViewModel.movieDisneyEasyGridCount,
-                    boxColor = boxColor
+                    boxColor = boxColor,
+                    movieID = 1
                 )
                 Spacer(modifier.height(6.dp))
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
-                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieEasyWords)
+                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieEasyWords,2)
                     },
                 )
             }
         }
-
+        var  onLevelDone by remember { mutableStateOf(false) }
         Box(
             modifier.fillMaxSize(),
             Alignment.Center
@@ -197,7 +198,9 @@ fun MovieEasyMainScreen(
                     text = gameOverText,
                     navController = navController,
                     font = Spenbeb,
-                    color = gameOverColor
+                    color = gameOverColor,
+                    onClick = onLevelDone,
+                    onClickChange = {onLevelDone = it}
                 )
             }
         }
