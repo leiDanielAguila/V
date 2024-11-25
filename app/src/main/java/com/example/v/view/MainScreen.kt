@@ -180,7 +180,7 @@ fun HowToPLayButton(modifier: Modifier = Modifier) {
     Box(
         modifier = Modifier
             .clickable {
-                // movieViewModel.resetDatabaseToDefaultState() // remove after
+                movieViewModel.resetDatabaseToDefaultState() // remove after
                 SoundManager.clickSound() }
             .clip(shape = RoundedCornerShape(20.dp))
             .background(differentBlack)

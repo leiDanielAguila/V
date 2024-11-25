@@ -401,6 +401,7 @@ fun GameTiles(
     boxColor: Color,
     movieID: Int,
 ) {
+    // change later to movieState
     val movieUiState by movieViewModel.movieUiState.collectAsState()
     val disneyEasy = movieUiState.disneyEasyTileStorage
     val disneyMedium = movieUiState.disneyMediumTileStorage

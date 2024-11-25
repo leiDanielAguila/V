@@ -4,19 +4,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.example.v.data.MovieState
 import com.example.v.data.MovieUiState
 import com.example.v.service.SoundManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 
 class MovieViewModel(
     private val movieDao: NewMovieDao
 ): ViewModel() {
     private val _movieUiState = MutableStateFlow(MovieUiState())
+    private val _movieState = MutableStateFlow(MovieState())
     val movieUiState: StateFlow<MovieUiState> = _movieUiState.asStateFlow()
+    val movieState: StateFlow<MovieState> = _movieState.asStateFlow()
 
 
     internal val movieDisneyEasyGridCount = 12
@@ -244,42 +249,43 @@ class MovieViewModel(
         9 to "A thief shrinks to save the day",
     )
 
-//    init {
-//        // LOADING THE INITIAL STATE FROM DB
-//        viewModelScope.launch {
-//            movieDao.getItem(1).collect { state ->
-//                _movieUiState.value = state ?: MovieUiState()
-//            }
-//        }
-//    }
+    init {
+        // LOADING THE INITIAL STATE FROM DB
+        viewModelScope.launch {
+            movieDao.getMovieItem(1).collect { state ->
+                _movieState.value = state ?: MovieState()
+            }
+        }
+    }
 
-//    private fun saveStateToDatabase() {
-//        viewModelScope.launch {
-//            // Extract only the updated fields
-//            val updatedMovieUiState = MovieUiState(
-//                id = _movieUiState.value.id, // Ensure we keep the same ID for identification
-//                wordTileStorage = _movieUiState.value.wordTileStorage,
-//                userScore = _movieUiState.value.userScore
-//            )
-//
-//            // Save only the updated fields to the database
-//            movieDao.upsertMovie(updatedMovieUiState)
-//        }
-//    }
+    fun saveStateToDatabase() {
+        viewModelScope.launch {
+            // Extract only the updated fields
+            val updatedMovieState = MovieState(
+                id = _movieUiState.value.id, // Ensure we keep the same ID for identification
+                disneyHardTileStorage = _movieUiState.value.disneyHardTileStorage,
+                disneyMediumTileStorage = _movieUiState.value.disneyMediumTileStorage,
+                disneyEasyTileStorage = _movieUiState.value.disneyEasyTileStorage,
+                superheroEasyTileStorage = _movieUiState.value.superheroEasyTileStorage,
+                userScore = _movieUiState.value.userScore
+            )
 
-//    fun resetDatabaseToDefaultState() { // RESET DB
-//        viewModelScope.launch {
-//            movieDao.deleteMovie(MovieUiState(id = 1)) // Remove current state
-//        }
-//    }
+            // Save only the updated fields to the database
+            movieDao.upsertMovie(updatedMovieState)
+        }
+    }
+
+    fun resetDatabaseToDefaultState() { // RESET DB
+        viewModelScope.launch {
+            movieDao.deleteMovie(MovieState(id = 1)) // Remove current state
+        }
+    }
 
     // Update user score
-//    private fun updateUserScore(newScore: Int) {
-//        _movieUiState.value = _movieUiState.value.copy(userScore = newScore)
-//
-//        // Save changes to the database
-//        saveStateToDatabase()
-//    }
+    private fun updateUserScore(newScore: Int) {
+        _movieState.value = _movieState.value.copy(userScore = newScore)
+        saveStateToDatabase()
+    }
 
     fun updateUserInput(newUserInput: String) {
         userInput = newUserInput.lowercase().replace("\\s".toRegex(), "")
@@ -296,12 +302,12 @@ class MovieViewModel(
         if (userInput in movieWords.values
             && userInput !in usedWords) {
             updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
+            updateUserScore(updatedScore) // for checking remove if the app crashes
             usedWords.add(userInput)
             findWord(movieWords, movieID)
-            //updateWordTileStorage(movieWords, userInput)
+
             updatedWordCount = _movieUiState.value.wordCount.plus(1)
             updateState()
-            //updateUserScore(updatedScore)
             SoundManager.correctSound()
             clearUserInput()
         } else if (userInput in usedWords || userInput.isBlank()) {

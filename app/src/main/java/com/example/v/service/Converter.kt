@@ -11,6 +11,13 @@ class Converters {
 
     @TypeConverter
     fun toMutableSet(data: String): MutableSet<Int> {
-        return data.split(",").map { it.toInt() }.toMutableSet() // Convert string back to MutableSet<Int>
+        return if (data.isNotEmpty()) {
+            data.split(",").mapNotNull {
+                // Safely parse each element, ignoring invalid or empty values
+                it.toIntOrNull()
+            }.toMutableSet()
+        } else {
+            mutableSetOf() // Return empty set if the input is empty
+        }
     }
 }
