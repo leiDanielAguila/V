@@ -9,7 +9,7 @@ import com.example.v.model.MovieDao
 import com.example.v.service.Converters
 
 
-@Database(entities = [MovieUiState::class], version = 1, exportSchema = false)
+@Database(entities = [MovieUiState::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDatabase : RoomDatabase() {
     abstract fun movieDao(): MovieDao

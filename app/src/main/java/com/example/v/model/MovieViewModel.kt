@@ -297,7 +297,7 @@ class MovieViewModel(
             usedWords.add(userInput)
 //          findWord(movieWords)
             updateWordTileStorage(movieWords, userInput)
-            updatedWordCount = _movieUiState.value.wordCount.plus(1)
+            updatedWordCount = _movieUiState.value.wordCount.plus(movieWords.count())
             updateState()
             updateUserScore(updatedScore)
             SoundManager.correctSound()
