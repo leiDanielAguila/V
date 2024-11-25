@@ -99,6 +99,10 @@ fun MovieEasyMainScreen(
         }
     }
 
+    if(showGameOver) {
+        movieViewModel.saveStateToDatabase()
+    }
+
     Box(
         modifier
             .fillMaxSize()

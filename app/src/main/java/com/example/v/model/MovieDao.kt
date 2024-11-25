@@ -2,6 +2,8 @@ package com.example.v.model
 
 import androidx.room.Dao
 import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.v.data.MovieState
@@ -32,7 +34,7 @@ interface MovieRepository {
 
 @Dao
 interface NewMovieDao {
-    @Upsert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsertMovie(movieState: MovieState)
 
     @Delete
@@ -43,5 +45,12 @@ interface NewMovieDao {
 
     @Query("SELECT * from moviestate ORDER BY id ASC")
     fun getAllMovieItems(): Flow<List<MovieState>>
+}
+
+interface newMovieRepository {
+    suspend fun insertItem(movieState: MovieState)
+    suspend fun deleteItem(movieState: MovieState)
+    fun getAllItems(): Flow<List<MovieState>>
+    fun getItem(id: Int): Flow<MovieState>
 }
 

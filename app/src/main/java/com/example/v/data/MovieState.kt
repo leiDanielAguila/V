@@ -5,8 +5,7 @@ import androidx.room.PrimaryKey
 
 @Entity
 data class MovieState(
-    @PrimaryKey
-    val id: Int = 1,
+    @PrimaryKey val id: Int = 1,
     var userScore: Int = 0,
     var disneyHardTileStorage: MutableSet<Int> = mutableSetOf(),
     var disneyMediumTileStorage: MutableSet<Int> = mutableSetOf(),

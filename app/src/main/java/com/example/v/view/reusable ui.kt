@@ -332,6 +332,7 @@ fun ScoreCard(
     movieViewModel: MovieViewModel
 ) {
     val movieUiState by movieViewModel.movieUiState.collectAsState()
+    val movieState by movieViewModel.movieState.collectAsState()
     Box(
         modifier
             .size(width = 109.dp, height = 93.01.dp)
@@ -351,7 +352,7 @@ fun ScoreCard(
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = movieUiState.userScore.toString(),
+                text = movieState.userScore.toString(),
                 fontSize = 28.sp,
                 fontFamily = Spenbeb,
                 color = Color.White
@@ -402,11 +403,13 @@ fun GameTiles(
     movieID: Int,
 ) {
     // change later to movieState
+    // for debugging remove if app crashes
     val movieUiState by movieViewModel.movieUiState.collectAsState()
-    val disneyEasy = movieUiState.disneyEasyTileStorage
-    val disneyMedium = movieUiState.disneyMediumTileStorage
-    val disneyHard = movieUiState.disneyHardTileStorage
-    val superHeroEasy = movieUiState.superheroEasyTileStorage
+    val movieState by movieViewModel.movieState.collectAsState()
+    val disneyEasy = movieState.disneyEasyTileStorage
+    val disneyMedium = movieState.disneyMediumTileStorage
+    val disneyHard = movieState.disneyHardTileStorage
+    val superHeroEasy = movieState.superheroEasyTileStorage
 
     var set: MutableSet<Int> = mutableSetOf()
 
@@ -475,7 +478,7 @@ fun GameTiles(
                             )
                         }
                     }
-                } else if (it in movieTiles && it in set) {
+                } else if (it in movieTiles && (it in set)) {
                     Surface(
                         modifier = Modifier.size(width = textBoxWidth, height = textBoxHeight),
                         color = Color.Green,

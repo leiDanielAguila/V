@@ -1,5 +1,6 @@
 package com.example.v.model
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -253,25 +254,49 @@ class MovieViewModel(
         // LOADING THE INITIAL STATE FROM DB
         viewModelScope.launch {
             movieDao.getMovieItem(1).collect { state ->
+                Log.d("DAO", "Saving MovieState with id = ${movieState.value.id}")
                 _movieState.value = state ?: MovieState()
             }
+
         }
+    }
+
+    private fun mapUiStateToMovieState(uiState: MovieUiState): MovieState {
+
+        Log.d("Mapping", "Mapping UiState: $uiState")
+        val result = MovieState(
+            id = uiState.id,
+            userScore = uiState.userScore,
+            disneyHardTileStorage = uiState.disneyHardTileStorage,
+            disneyMediumTileStorage = uiState.disneyMediumTileStorage,
+            disneyEasyTileStorage = uiState.disneyEasyTileStorage,
+            superheroEasyTileStorage = uiState.superheroEasyTileStorage,
+        )
+        Log.d("Mapping", "Resulting MovieState: $result")
+        return result
     }
 
     fun saveStateToDatabase() {
         viewModelScope.launch {
-            // Extract only the updated fields
-            val updatedMovieState = MovieState(
-                id = _movieUiState.value.id, // Ensure we keep the same ID for identification
-                disneyHardTileStorage = _movieUiState.value.disneyHardTileStorage,
-                disneyMediumTileStorage = _movieUiState.value.disneyMediumTileStorage,
-                disneyEasyTileStorage = _movieUiState.value.disneyEasyTileStorage,
-                superheroEasyTileStorage = _movieUiState.value.superheroEasyTileStorage,
-                userScore = _movieUiState.value.userScore
-            )
+            try {
+                // Log the current UI state before mapping
+                Log.d("saveStateToDatabase", "Current UI State: ${_movieUiState.value}")
 
-            // Save only the updated fields to the database
-            movieDao.upsertMovie(updatedMovieState)
+                // Extract only the updated fields
+                val updatedMovieState = mapUiStateToMovieState(_movieUiState.value)
+
+                // Log the mapped movie state
+                Log.d("saveStateToDatabase", "Mapped Movie State: $updatedMovieState")
+
+                // Save only the updated fields to the database
+                movieDao.upsertMovie(updatedMovieState)
+
+                // Confirm upsert operation
+                Log.d("saveStateToDatabase", "Upsert operation successful for $updatedMovieState")
+            } catch (e: Exception) {
+                // Log any exception that occurs during the upsert process
+                Log.e("saveStateToDatabase", "Error during upsert operation", e)
+            }
         }
     }
 
@@ -302,12 +327,12 @@ class MovieViewModel(
         if (userInput in movieWords.values
             && userInput !in usedWords) {
             updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
-            updateUserScore(updatedScore) // for checking remove if the app crashes
             usedWords.add(userInput)
             findWord(movieWords, movieID)
-
             updatedWordCount = _movieUiState.value.wordCount.plus(1)
             updateState()
+            saveStateToDatabase()
+            updateUserScore(updatedScore) // for checking remove if the app crashes
             SoundManager.correctSound()
             clearUserInput()
         } else if (userInput in usedWords || userInput.isBlank()) {

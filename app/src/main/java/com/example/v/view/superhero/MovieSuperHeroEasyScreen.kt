@@ -95,7 +95,9 @@ fun MovieSuperHeroEasyMainScreen(
         }
     }
 
-
+    if(showGameOver) {
+        movieViewModel.saveStateToDatabase()
+    }
 
     Box(
         modifier

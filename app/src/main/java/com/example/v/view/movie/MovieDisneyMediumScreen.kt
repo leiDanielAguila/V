@@ -94,6 +94,10 @@ fun MovieDisneyMediumMainScreen(
         }
     }
 
+    if(showGameOver) {
+        movieViewModel.saveStateToDatabase()
+    }
+
     Box(
         modifier
             .fillMaxSize()

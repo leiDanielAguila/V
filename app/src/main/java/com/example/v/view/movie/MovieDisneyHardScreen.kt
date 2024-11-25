@@ -96,9 +96,7 @@ fun MovieDisneyHardMainScreen(
         }
     }
 
-    if (showGameOver) {
-        onLevelDone = true
-    }
+
 
     Box(
         modifier
