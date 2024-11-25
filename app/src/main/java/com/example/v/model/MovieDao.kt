@@ -2,8 +2,6 @@ package com.example.v.model
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Upsert
 import com.example.v.data.MovieState
@@ -34,7 +32,7 @@ interface MovieRepository {
 
 @Dao
 interface NewMovieDao {
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    @Upsert
     suspend fun upsertMovie(movieState: MovieState)
 
     @Delete

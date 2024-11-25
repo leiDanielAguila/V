@@ -75,7 +75,6 @@ fun MovieDisneyHardMainScreen(
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
-
     if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords) == 1) {
         isGameOver = true
         gameOverText = "Game Over"
@@ -94,6 +93,10 @@ fun MovieDisneyHardMainScreen(
         } else {
             showGameOver = false
         }
+    }
+
+    if(showGameOver) {
+        movieViewModel.saveStateToDatabase()
     }
 
 

@@ -14,6 +14,7 @@ object SoundManager {
     private var wordUsed: Int? = null
     private var win: Int? = null
     private var fail: Int? = null
+    private var liod: Int? = null
 
     fun initialize(context: Context) {
         soundPool = SoundPool.Builder()
@@ -32,6 +33,7 @@ object SoundManager {
         wordUsed = soundPool?.load(context, R.raw.word_used, 1)
         win = soundPool?.load(context, R.raw.win, 1)
         fail = soundPool?.load(context, R.raw.fail, 1)
+        liod = soundPool?.load(context, R.raw.liod, 2)
     }
 
     fun clickSound() {
@@ -70,8 +72,16 @@ object SoundManager {
         }
     }
 
+    fun liod() {
+        liod?.let {
+            id -> soundPool?.play(id, 1f, 1f, 2, 0, 1f)
+        }
+    }
+
     fun release() {
         soundPool?.release()
         soundPool = null
     }
+
+
 }

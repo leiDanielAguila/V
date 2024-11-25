@@ -262,15 +262,22 @@ class MovieViewModel(
     }
 
     private fun mapUiStateToMovieState(uiState: MovieUiState): MovieState {
-
         Log.d("Mapping", "Mapping UiState: $uiState")
+
+        val currentScore = _movieState.value.userScore // Get the current score from _movieState
+        val newScore = currentScore + uiState.userScore
+        val hardTileStorage = _movieState.value.disneyHardTileStorage + uiState.disneyHardTileStorage
+        val mediumTileStorage = _movieState.value.disneyMediumTileStorage + uiState.disneyMediumTileStorage
+        val easyTileStorage = _movieState.value.disneyEasyTileStorage + uiState.disneyEasyTileStorage
+        val superheroStorage = _movieState.value.superheroEasyTileStorage + uiState.superheroEasyTileStorage
+
         val result = MovieState(
-            id = uiState.id,
-            userScore = uiState.userScore,
-            disneyHardTileStorage = uiState.disneyHardTileStorage,
-            disneyMediumTileStorage = uiState.disneyMediumTileStorage,
-            disneyEasyTileStorage = uiState.disneyEasyTileStorage,
-            superheroEasyTileStorage = uiState.superheroEasyTileStorage,
+            id = _movieState.value.id,
+            userScore = newScore, // Increment score
+            disneyHardTileStorage = hardTileStorage.toMutableSet(), // Ensure no duplicates
+            disneyMediumTileStorage = mediumTileStorage.toMutableSet(), // Ensure no duplicates
+            disneyEasyTileStorage = easyTileStorage.toMutableSet(), // Ensure no duplicates
+            superheroEasyTileStorage = superheroStorage.toMutableSet() // Ensure no duplicates
         )
         Log.d("Mapping", "Resulting MovieState: $result")
         return result
@@ -312,6 +319,8 @@ class MovieViewModel(
         saveStateToDatabase()
     }
 
+
+
     fun updateUserInput(newUserInput: String) {
         userInput = newUserInput.lowercase().replace("\\s".toRegex(), "")
     }
@@ -324,6 +333,19 @@ class MovieViewModel(
         movieWords: Map<Set<Int>, String>,
         movieID: Int
     ) {
+
+        var set: MutableSet<Int> = mutableSetOf()
+
+        if (movieID == 1) {
+            set = _movieState.value.disneyEasyTileStorage.toMutableSet()
+        } else if (movieID == 2) {
+            set = _movieState.value.disneyMediumTileStorage.toMutableSet()
+        } else if (movieID == 3) {
+            set = _movieState.value.disneyHardTileStorage.toMutableSet()
+        } else if (movieID == 4) {
+            set = _movieState.value.superheroEasyTileStorage.toMutableSet()
+        }
+
         if (userInput in movieWords.values
             && userInput !in usedWords) {
             updatedScore = _movieUiState.value.userScore.plus(scoreIncrease)
@@ -332,10 +354,13 @@ class MovieViewModel(
             updatedWordCount = _movieUiState.value.wordCount.plus(1)
             updateState()
             saveStateToDatabase()
-            updateUserScore(updatedScore) // for checking remove if the app crashes
+            // updateUserScore(updatedScore) // for checking remove if the app crashes
             SoundManager.correctSound()
             clearUserInput()
-        } else if (userInput in usedWords || userInput.isBlank()) {
+        } else if (userInput in usedWords
+            || userInput.isBlank()
+            || set in movieWords.keys
+            ) {
             SoundManager.usedWord()
             clearUserInput()
         } else {
@@ -355,8 +380,10 @@ class MovieViewModel(
 
         if (_movieUiState.value.gameLives == 0) {
             gameOverStatus = 1
+            SoundManager.fail()
         } else if (_movieUiState.value.wordCount == movieWords.size) {
             gameOverStatus = 2
+            SoundManager.win()
         }
 
         return gameOverStatus

@@ -18,6 +18,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,6 +49,7 @@ import com.example.v.ui.theme.disnep
 import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.onyx
+import com.example.v.view.GameHearts
 import com.example.v.view.GameOver
 import com.example.v.view.GameTiles
 import com.example.v.view.HintNotes
@@ -65,6 +67,7 @@ fun MovieEasyMainScreen(
     val context = LocalContext.current
     val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
+    val movieUiState by movieViewModel.movieUiState.collectAsState()
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
 
@@ -73,7 +76,7 @@ fun MovieEasyMainScreen(
     var gameOverColor by remember { mutableStateOf(lightGreen) }
     var isWin by remember { mutableStateOf(false) }
 
-    var boxColor by remember { mutableStateOf(Color.White) }
+    val boxColor by remember { mutableStateOf(Color.White) }
     var showGameOver by remember { mutableStateOf(false) }
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
@@ -141,7 +144,16 @@ fun MovieEasyMainScreen(
             MovieTicketHeader(header = "Disney", font = disnep) // change font
         }
 
-
+        Box(
+            modifier
+                .fillMaxSize()
+                .padding(top = 140.dp),
+            Alignment.TopCenter
+        ) {
+            GameHearts(
+                movieUiState = movieUiState
+            )
+        }
 
         Box(
             modifier
@@ -162,8 +174,8 @@ fun MovieEasyMainScreen(
         }
 
         Box(
-            modifier.fillMaxSize(),
-            Alignment.Center
+            modifier.fillMaxSize().padding(bottom = 120.dp),
+            Alignment.BottomCenter
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
