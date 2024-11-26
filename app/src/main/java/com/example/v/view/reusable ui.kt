@@ -423,7 +423,7 @@ fun GameTiles(
     } else if (movieID == 3) {
         set = disneyHard.toMutableSet()
     } else if (movieID == 4) {
-        set = superHeroEasy
+        set = superHeroEasy.toMutableSet()
     }
     Surface(
         modifier

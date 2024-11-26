@@ -177,8 +177,8 @@ fun MovieSuperHeroEasyMainScreen(
                     movieViewModel = movieViewModel,
                     outerBoxWidth = 390.dp,
                     outerBoxHeight = 450.dp,
-                    textBoxWidth = 10.dp,
-                    textBoxHeight = 25.dp,
+                    textBoxWidth = 20.dp,
+                    textBoxHeight = 30.dp,
                     tilesCount = movieViewModel.gameTilesSuperHeroEasyCount,
                     movieTiles = movieViewModel.movieSuperHeroEasyTiles,
                     movieNumberTiles = movieViewModel.movieSuperHeroEasyNumberTiles,
@@ -190,7 +190,7 @@ fun MovieSuperHeroEasyMainScreen(
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
-                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieSuperHeroEasyWords,1)
+                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieSuperHeroEasyWords,4)
                         movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords)
                     },
                 )

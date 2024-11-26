@@ -195,7 +195,7 @@ fun MovieEasyMainScreen(
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
-                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieEasyWords,2)
+                        movieViewModel.checkUserInput(movieWords = movieViewModel.movieEasyWords,1)
                     },
                 )
             }

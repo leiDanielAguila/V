@@ -452,7 +452,7 @@ class MovieViewModel(
             currentState.copy(
                 userScore = updatedScore,
                 disneyHardTileStorage = disneyHardTileStorage,
-                disneyEasyTileStorage = disneyMediumTileStorage,
+                disneyEasyTileStorage = disneyEasyTileStorage,
                 disneyMediumTileStorage = disneyMediumTileStorage,
                 superheroEasyTileStorage = superheroEasyTileStorage,
                 wordCount = updatedWordCount,
