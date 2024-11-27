@@ -75,11 +75,11 @@ fun MovieSuperHeroEasyMainScreen(
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
 
-    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords) == 1) {
+    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords, 4) == 1) {
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
-    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords) == 2) {
+    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords, 4) == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
@@ -191,7 +191,7 @@ fun MovieSuperHeroEasyMainScreen(
                     movieViewModel = movieViewModel,
                     onDone = {
                         movieViewModel.checkUserInput(movieWords = movieViewModel.movieSuperHeroEasyWords,4)
-                        movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords)
+                        movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords, 4)
                     },
                 )
             }

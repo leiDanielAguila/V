@@ -24,6 +24,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -41,13 +42,18 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -75,6 +81,7 @@ import com.example.v.ui.theme.heartRed
 import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.onyx
+import kotlinx.coroutines.delay
 
 @Composable
 fun ReusableNavigationButton(
@@ -243,7 +250,7 @@ fun GameOver(
 
             ReusableNavigationButton(
                 Screen.CategoryScreen,
-                textInButton = "Exit",
+                textInButton = "Menu",
                 20.sp,
                 navController = navController
             )
@@ -257,7 +264,20 @@ fun ShowLevelButton(
     onClickLevelDone: Boolean,
     onClickLevelDoneChange: (Boolean) -> Unit,
     navController: NavController,
-    font: FontFamily = Spenbeb) {
+    font: FontFamily = Spenbeb
+) {
+    // State to track the countdown
+    var countdown by remember { mutableIntStateOf(9) }
+    val context = LocalContext.current
+
+    // timer
+    LaunchedEffect(key1 = countdown) {
+        if (countdown > 0) {
+            delay(1000)
+            countdown -= 1
+        }
+    }
+
     Button(
         onClick = {
             navController.navigate(screen.route)
@@ -266,14 +286,25 @@ fun ShowLevelButton(
         elevation = ButtonDefaults.elevatedButtonElevation(30.dp),
         colors = ButtonDefaults.buttonColors(lightRed)
     ) {
-        Text(
-            text = "Show Level",
-            color = onyx,
-            fontSize = 18.sp,
-            fontFamily = font
-        )
+        // Row for placing countdown and text side by side
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(
+                text = "$countdown", // Display countdown number
+                color = onyx,
+                fontSize = 18.sp,
+                fontFamily = font
+            )
+            Spacer(modifier = Modifier.width(8.dp)) // Spacer between countdown and text
+            Text(
+                text = "Show Level",
+                color = onyx,
+                fontSize = 18.sp,
+                fontFamily = font
+            )
+        }
     }
 }
+
 
 @Composable
 fun GameHearts(

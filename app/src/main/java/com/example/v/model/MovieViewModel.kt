@@ -54,6 +54,11 @@ class MovieViewModel(
     private var disneyMediumTileStorage: MutableSet<Int> = mutableSetOf()
     private var superheroEasyTileStorage: MutableSet<Int> = mutableSetOf()
 
+    private var disneyEasyWordCount = 0
+    private var disneyMediumWordCount = 0
+    private var disneyHardWordCount = 0
+    private var superheroEasyWordCount = 0
+
     var userInput by mutableStateOf("")
 
     val movieEasyTiles = mapOf( 18 to 'm', 30 to 'o', 32 to 'm',  42 to 'a',
@@ -275,6 +280,11 @@ class MovieViewModel(
         val mediumTileStorage = _movieState.value.disneyMediumTileStorage + uiState.disneyMediumTileStorage
         val easyTileStorage = _movieState.value.disneyEasyTileStorage + uiState.disneyEasyTileStorage
         val superheroStorage = _movieState.value.superheroEasyTileStorage + uiState.superheroEasyTileStorage
+//        val disneyEasyWordCount1 = _movieState.value.disneyEasyWordCount + uiState.disneyEasyWordCount
+//        val disneyMediumWordCount2 = _movieState.value.disneyMediumWordCount + uiState.disneyMediumWordCount
+//        val disneyHardWordCount3 = _movieState.value.disneyHardWordCount + uiState.disneyHardWordCount
+//        val superheroEasyWordCount4 = _movieState.value.superheroEasyWordCount + uiState.superheroEasyWordCount
+
 
         val result = MovieState(
             id = _movieState.value.id,
@@ -282,13 +292,17 @@ class MovieViewModel(
             disneyHardTileStorage = hardTileStorage.toMutableSet(), // Ensure no duplicates
             disneyMediumTileStorage = mediumTileStorage.toMutableSet(), // Ensure no duplicates
             disneyEasyTileStorage = easyTileStorage.toMutableSet(), // Ensure no duplicates
-            superheroEasyTileStorage = superheroStorage.toMutableSet() // Ensure no duplicates
+            superheroEasyTileStorage = superheroStorage.toMutableSet(), // Ensure no duplicates
+            disneyEasyWordCount = _movieState.value.disneyEasyWordCount,
+            disneyMediumWordCount = _movieState.value.disneyMediumWordCount,
+            disneyHardWordCount = _movieState.value.disneyHardWordCount,
+            superheroEasyWordCount = _movieState.value.superheroEasyWordCount
         )
         Log.d("Mapping", "Resulting MovieState: $result")
         return result
     }
 
-    fun saveStateToDatabase() {
+    private fun saveStateToDatabase() {
         viewModelScope.launch {
             try {
                 // Log the current UI state before mapping
@@ -318,14 +332,6 @@ class MovieViewModel(
         }
     }
 
-    // Update user score
-    private fun updateUserScore(newScore: Int) {
-        _movieState.value = _movieState.value.copy(userScore = newScore)
-        saveStateToDatabase()
-    }
-
-
-
     fun updateUserInput(newUserInput: String) {
         userInput = newUserInput.lowercase().replace("\\s".toRegex(), "")
     }
@@ -339,16 +345,12 @@ class MovieViewModel(
         movieID: Int
     ) {
 
-        var set: MutableSet<Int> = mutableSetOf()
-
-        if (movieID == 1) {
-            set = _movieState.value.disneyEasyTileStorage.toMutableSet()
-        } else if (movieID == 2) {
-            set = _movieState.value.disneyMediumTileStorage.toMutableSet()
-        } else if (movieID == 3) {
-            set = _movieState.value.disneyHardTileStorage.toMutableSet()
-        } else if (movieID == 4) {
-            set = _movieState.value.superheroEasyTileStorage.toMutableSet()
+        val set = when (movieID) {
+            1 -> _movieState.value.disneyEasyTileStorage.toMutableSet()
+            2 -> _movieState.value.disneyMediumTileStorage.toMutableSet()
+            3 -> _movieState.value.disneyHardTileStorage.toMutableSet()
+            4 -> _movieState.value.superheroEasyTileStorage.toMutableSet()
+            else -> throw IllegalArgumentException("Invalid movieID: $movieID")
         }
 
         if (userInput in movieWords.values
@@ -357,10 +359,11 @@ class MovieViewModel(
             usedWords.add(userInput)
             isCorrect = true
             findWord(movieWords, movieID)
-            updatedWordCount = _movieUiState.value.wordCount.plus(1)
+            updateWordCount(movieID)
+            // updatedWordCount = _movieUiState.value.wordCount.plus(1)
             updateState()
             saveStateToDatabase()
-            // updateUserScore(updatedScore) // for checking remove if the app crashes
+            //updateUserScore(updatedScore) // for checking remove if the app crashes
             SoundManager.correctSound()
             clearUserInput()
         } else if (userInput in usedWords
@@ -374,22 +377,49 @@ class MovieViewModel(
             isCorrect = false
             SoundManager.wrongSound()
             clearUserInput()
-            removeOneLife()
+            removeOneLife(movieID)
         }
     }
 
+    private fun updateWordCount(movieID: Int) {
+       when (movieID) {
+           1 -> _movieState.value.disneyEasyWordCount+=1
+           2 -> _movieState.value.disneyMediumWordCount+=1
+           3 -> _movieState.value.disneyHardWordCount+=1
+           4 -> _movieState.value.superheroEasyWordCount+=1
+       }
+    }
+
     fun checkIfGameIsOver(
-       movieWords: Map<Set<Int>, String>
+       movieWords: Map<Set<Int>, String>,
+       movieID: Int,
     ): Int {
         var gameOverStatus = 0
+        val currentState = _movieState.value
+
+        val movieIDSet = when(movieID) {
+            1 -> currentState.disneyEasyWordCount
+            2 -> currentState.disneyMediumWordCount
+            3 -> currentState.disneyHardWordCount
+            4 -> currentState.superheroEasyWordCount
+            else -> throw IllegalArgumentException("Invalid movieID: $movieID")
+        }
+
+        val movieLives = when(movieID) {
+            1 -> currentState.disneyEasyGameLives
+            2 -> currentState.disneyMediumGameLives
+            3 -> currentState.disneyHardGameLives
+            4 -> currentState.superheroEasyGameLives
+            else -> throw IllegalArgumentException("Invalid movieID: $movieID")
+        }
 
         // 1 is gameOver and lose
         // 2 is gameOver and win
 
-        if (_movieUiState.value.gameLives == 0) {
+        if (movieLives == 0) {
             gameOverStatus = 1
             SoundManager.fail()
-        } else if (_movieUiState.value.wordCount == movieWords.size) {
+        } else if (movieIDSet == movieWords.size) {
             gameOverStatus = 2
             SoundManager.win()
         }
@@ -419,31 +449,20 @@ class MovieViewModel(
         }
     }
 
-//    private fun updateWordTileStorage(movieWords: Map<Set<Int>, String>, userInput: String) {
-//        // Copy the current storage to a mutable set
-//        val updatedStorage = _movieUiState.value.wordTileStorage.toMutableSet()
-//
-//        // Check if the user input matches any word and update the storage
-//        for ((key, value) in movieWords) {
-//            if (userInput == value) {
-//                updatedStorage.addAll(key) // Add matching tiles to storage
-//            }
-//        }
-//
-//        // Update the UI state with the new storage
-//        _movieUiState.value = _movieUiState.value.copy(wordTileStorage = updatedStorage)
-//
-//        // Save changes to the database
-//        saveStateToDatabase()
-//    }
-
-
-    private fun removeOneLife() {
+    private fun removeOneLife(movieID: Int) {
         _movieUiState.update { currentState ->
             currentState.copy(
                 gameLives = currentState.gameLives - 1,
                 isCorrect = false
             )
+        }
+
+        when (movieID) {
+            1 -> _movieState.value = _movieState.value.copy(disneyEasyGameLives = _movieState.value.disneyEasyGameLives - 1)
+            2 -> _movieState.value = _movieState.value.copy(disneyMediumGameLives = _movieState.value.disneyMediumGameLives - 1)
+            3 -> _movieState.value = _movieState.value.copy(disneyHardGameLives = _movieState.value.disneyHardGameLives - 1)
+            4 -> _movieState.value = _movieState.value.copy(superheroEasyGameLives = _movieState.value.superheroEasyGameLives - 1)
+            else -> throw IllegalArgumentException("Invalid movieID: $movieID")
         }
     }
 
@@ -457,6 +476,10 @@ class MovieViewModel(
                 superheroEasyTileStorage = superheroEasyTileStorage,
                 wordCount = updatedWordCount,
                 isCorrect = isCorrect,
+                disneyEasyWordCount = disneyEasyWordCount,
+                disneyMediumWordCount = disneyMediumWordCount,
+                disneyHardWordCount = disneyHardWordCount,
+                superheroEasyWordCount = superheroEasyWordCount
             )
         }
     }

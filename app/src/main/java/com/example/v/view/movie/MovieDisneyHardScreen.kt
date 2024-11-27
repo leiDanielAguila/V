@@ -60,6 +60,7 @@ fun MovieDisneyHardMainScreen(
     val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
     val movieUiState by movieViewModel.movieUiState.collectAsState()
+    val movieState by movieViewModel.movieState.collectAsState()
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
 
@@ -75,21 +76,28 @@ fun MovieDisneyHardMainScreen(
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
-    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords) == 1) {
+    var gameFinished = movieState.disneyHardFinished
+
+    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords, 3) == 1) {
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
-    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords) == 2) {
+
+
+    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords, 3) == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
         isWin = true
+
     }
 
     LaunchedEffect(isGameOver) {
         if (isGameOver) {
             delay(2000)
             showGameOver = true
+            delay(9000)
+            showGameOver = false
         } else {
             showGameOver = false
         }
@@ -193,7 +201,7 @@ fun MovieDisneyHardMainScreen(
                     movieViewModel = movieViewModel,
                     onDone = {
                         movieViewModel.checkUserInput(movieWords = movieViewModel.movieDisneyHardWords,3)
-                        movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords)
+                        movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords, 3)
                     },
                 )
             }

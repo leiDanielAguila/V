@@ -41,6 +41,9 @@ interface NewMovieDao {
     @Query("SELECT * from moviestate WHERE id = :id")
     fun getMovieItem(id: Int): Flow<MovieState>
 
+    @Query("SELECT * FROM moviestate WHERE id = :id LIMIT 1")
+    suspend fun getMovieState(id: Int): MovieState
+
     @Query("SELECT * from moviestate ORDER BY id ASC")
     fun getAllMovieItems(): Flow<List<MovieState>>
 }

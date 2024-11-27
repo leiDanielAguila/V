@@ -15,6 +15,19 @@ data class MovieUiState (
     var disneyMediumTileStorage: MutableSet<Int> = mutableSetOf(),
     var disneyEasyTileStorage: MutableSet<Int> = mutableSetOf(),
     var superheroEasyTileStorage: MutableSet<Int> = mutableSetOf(),
+
+    var disneyEasyWordCount: Int = 0,
+    var disneyMediumWordCount: Int = 0,
+    var disneyHardWordCount: Int = 0,
+    var superheroEasyWordCount: Int = 0,
+    var scifiEasyWordCount: Int = 0,
+
+    var disneyEasyGameLives: Int = 3,
+    var disneyMediumGameLives: Int = 3,
+    var disneyHardGameLives: Int = 3,
+    var superheroEasyGameLives: Int = 3,
+    var scifiEasyGameLives: Int = 3,
+
     var wordCount: Int = 0,
     var ifGameIsOver: Boolean = false,
     var isGameOverAndWin: Boolean = false,

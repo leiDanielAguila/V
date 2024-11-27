@@ -67,17 +67,17 @@ fun MovieDisneyMediumMainScreen(
     var gameOverColor by remember { mutableStateOf(lightGreen) }
     var isWin by remember { mutableStateOf(false) }
 
-    var boxColor by remember { mutableStateOf(Color.White) }
+    val boxColor by remember { mutableStateOf(Color.White) }
     var showGameOver by remember { mutableStateOf(false) }
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
 
-    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords) == 1) {
+    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 2) == 1) {
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
-    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords) == 2) {
+    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 2) == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
@@ -187,6 +187,7 @@ fun MovieDisneyMediumMainScreen(
                     movieViewModel = movieViewModel,
                     onDone = {
                         movieViewModel.checkUserInput(movieWords = movieViewModel.movieDisneyMediumWords,2)
+                        movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 2)
                     },
                 )
             }

@@ -82,11 +82,11 @@ fun MovieEasyMainScreen(
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
 // game over logic change .movieEasyWords to its appropriate difficulty level
-    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieEasyWords) == 1) {
+    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieEasyWords, 1) == 1) {
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
-    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieEasyWords) == 2) {
+    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieEasyWords, 1) == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
@@ -195,6 +195,7 @@ fun MovieEasyMainScreen(
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
+                        movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 1)
                         movieViewModel.checkUserInput(movieWords = movieViewModel.movieEasyWords,1)
                     },
                 )
