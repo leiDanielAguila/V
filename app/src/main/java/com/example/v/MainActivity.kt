@@ -34,6 +34,9 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             VTheme {
+
+                
+
                 val navController = rememberNavController()
                 val database = Room.databaseBuilder(
                     applicationContext,
