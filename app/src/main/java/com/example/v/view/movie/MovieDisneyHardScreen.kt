@@ -228,7 +228,9 @@ fun MovieDisneyHardMainScreen(
                     onClickChange = {
                         onLevelDone = it
                     },
-                    screen = Screen.MovieDisneyHard
+                    screen = Screen.MovieDisneyHard,
+                    lose = isLose,
+                    movieID = 3 // change depending on screen
                 )
             }
         }

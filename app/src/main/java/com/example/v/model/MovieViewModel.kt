@@ -419,6 +419,18 @@ class MovieViewModel(
         )
     }
 
+    fun tryAgain(movieID: Int) {
+        val currentState = _movieState.value
+
+        _movieState.value = currentState.copy(
+            disneyEasyGameLives = if (movieID == 1) 3 else currentState.disneyEasyGameLives,
+            disneyMediumGameLives = if (movieID == 2) 3 else currentState.disneyMediumGameLives,
+            disneyHardGameLives = if (movieID == 3) 3 else currentState.disneyHardGameLives,
+            superheroEasyGameLives = if (movieID == 4) 3 else currentState.superheroEasyGameLives
+        )
+        saveStateToDatabase()
+    }
+
     fun checkIfGameIsOver(
        movieWords: Map<Set<Int>, String>,
        movieID: Int,

@@ -69,6 +69,7 @@ fun MovieSuperHeroEasyMainScreen(
     var gameOverText by remember { mutableStateOf("") }
     var gameOverColor by remember { mutableStateOf(lightGreen) }
     var isWin by remember { mutableStateOf(false) }
+    var isLose by remember { mutableStateOf(false) }
     var showGameOver by remember { mutableStateOf(false) }
 
     val boxColor by remember { mutableStateOf(Color.White) }
@@ -83,6 +84,7 @@ fun MovieSuperHeroEasyMainScreen(
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
+        isLose = true
     } else if (gameOverStatus == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
@@ -94,6 +96,8 @@ fun MovieSuperHeroEasyMainScreen(
         if (isGameOver) {
             delay(2000)
             showGameOver = true
+            delay(9000)
+            showGameOver = false
         } else {
             showGameOver = false
         }
@@ -216,7 +220,9 @@ fun MovieSuperHeroEasyMainScreen(
                     color = gameOverColor,
                     onClick = onLevelDone,
                     onClickChange = {onLevelDone = it},
-                    screen = Screen.MovieSuperHeroEasy
+                    screen = Screen.MovieSuperHeroEasy,
+                    lose = isLose,
+                    movieID = 4
                 )
             }
         }

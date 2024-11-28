@@ -229,7 +229,9 @@ fun MovieEasyMainScreen(
                     color = gameOverColor,
                     onClick = onLevelDone,
                     onClickChange = {onLevelDone = it},
-                    screen = Screen.MovieEasy
+                    screen = Screen.MovieEasy,
+                    lose = isLose,
+                    movieID = 1
                 )
             }
         }

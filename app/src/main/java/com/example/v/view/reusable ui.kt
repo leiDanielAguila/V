@@ -53,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -66,6 +67,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.v.R
 import com.example.v.Screen
+import com.example.v.data.AppDatabase
 import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
@@ -216,7 +218,9 @@ fun GameOver(
     text: String,
     color: Color,
     font: FontFamily,
-    navController: NavController
+    navController: NavController,
+    lose: Boolean,
+    movieID: Int
 ) {
     Box(
         modifier
@@ -241,7 +245,9 @@ fun GameOver(
                 onClickLevelDone = onClick,
                 onClickLevelDoneChange = onClickChange,
                 navController = navController,
-                screen = screen
+                screen = screen,
+                lose = lose,
+                movieID = movieID
             )
 
 
@@ -261,8 +267,13 @@ fun ShowLevelButton(
     onClickLevelDone: Boolean,
     onClickLevelDoneChange: (Boolean) -> Unit,
     navController: NavController,
-    font: FontFamily = Spenbeb
+    font: FontFamily = Spenbeb,
+    lose: Boolean,
+    movieID: Int
 ) {
+    val context = LocalContext.current
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
+    val movieViewModel = remember { MovieViewModel(movieDao) }
     // State to track the countdown
     var countdown by remember { mutableIntStateOf(9) }
     var countdownColor by remember { mutableStateOf(onyx) }
@@ -284,6 +295,7 @@ fun ShowLevelButton(
         onClick = {
             navController.navigate(screen.route)
             onClickLevelDoneChange(!onClickLevelDone)
+            movieViewModel.tryAgain(movieID)
         },
         elevation = ButtonDefaults.elevatedButtonElevation(30.dp),
         colors = ButtonDefaults.buttonColors(lightRed)
@@ -296,6 +308,15 @@ fun ShowLevelButton(
                 fontSize = countdownFontSize,
                 fontFamily = font
             )
+            if (lose) {
+                Spacer(modifier = Modifier.padding(8.dp))
+                Text(
+                    text = "Try Again?",
+                    color = onyx,
+                    fontSize = 18.sp,
+                    fontFamily = font
+                )
+            }
         }
     }
 }

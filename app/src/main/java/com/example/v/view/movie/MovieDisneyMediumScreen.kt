@@ -67,7 +67,7 @@ fun MovieDisneyMediumMainScreen(
     var gameOverText by remember { mutableStateOf("") }
     var gameOverColor by remember { mutableStateOf(lightGreen) }
     var isWin by remember { mutableStateOf(false) }
-
+    var isLose by remember { mutableStateOf(false) }
     val boxColor by remember { mutableStateOf(Color.White) }
     var showGameOver by remember { mutableStateOf(false) }
 
@@ -81,6 +81,7 @@ fun MovieDisneyMediumMainScreen(
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
+        isLose = true
     } else if (gameOverStatus == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
@@ -92,6 +93,8 @@ fun MovieDisneyMediumMainScreen(
         if (isGameOver) {
             delay(2000)
             showGameOver = true
+            delay(2000)
+            showGameOver = false
         } else {
             showGameOver = false
         }
@@ -214,7 +217,9 @@ fun MovieDisneyMediumMainScreen(
                     onClickChange = {
                         onLevelDone = it
                     },
-                    screen = Screen.MovieDisneyMedium
+                    screen = Screen.MovieDisneyMedium,
+                    lose = isLose,
+                    movieID = 2
                 )
             }
         }
