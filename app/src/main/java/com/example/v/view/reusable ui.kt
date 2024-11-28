@@ -53,7 +53,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -67,7 +66,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.v.R
 import com.example.v.Screen
-import com.example.v.data.MovieUiState
 import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
@@ -269,7 +267,6 @@ fun ShowLevelButton(
     var countdown by remember { mutableIntStateOf(9) }
     var countdownColor by remember { mutableStateOf(onyx) }
     var countdownFontSize by remember { mutableStateOf(18.sp) }
-    val context = LocalContext.current
 
     // timer
     LaunchedEffect(key1 = countdown) {
@@ -307,9 +304,21 @@ fun ShowLevelButton(
 @Composable
 fun GameHearts(
     modifier: Modifier = Modifier,
-    movieUiState: MovieUiState
+    movieViewModel: MovieViewModel,
+    movieID: Int
 ) {
     val infiniteTransition = rememberInfiniteTransition(label = "")
+
+    val movieState by movieViewModel.movieState.collectAsState()
+
+
+    val lives = when (movieID) {
+        1 -> movieState.disneyEasyGameLives
+        2 -> movieState.disneyMediumGameLives
+        3 -> movieState.disneyHardGameLives
+        4 -> movieState.superheroEasyGameLives
+        else -> throw IllegalArgumentException("Invalid movieID: $movieID")
+    }
 
     val heartSize by infiniteTransition.animateValue(
         initialValue = 30.dp,
@@ -337,7 +346,7 @@ fun GameHearts(
         ) {
             val totalLives = 3
             (0 until totalLives).forEach { index ->
-                if (index < movieUiState.gameLives) {
+                if (index < lives) {
                     // Display a full heart for remaining lives
                     Image(
                         painter = painterResource(R.drawable.heart),
@@ -363,7 +372,6 @@ fun ScoreCard(
     modifier: Modifier = Modifier,
     movieViewModel: MovieViewModel
 ) {
-    val movieUiState by movieViewModel.movieUiState.collectAsState()
     val movieState by movieViewModel.movieState.collectAsState()
     Box(
         modifier
@@ -436,23 +444,14 @@ fun GameTiles(
 ) {
     // change later to movieState
     // for debugging remove if app crashes
-    val movieUiState by movieViewModel.movieUiState.collectAsState()
     val movieState by movieViewModel.movieState.collectAsState()
-    val disneyEasy = movieState.disneyEasyTileStorage
-    val disneyMedium = movieState.disneyMediumTileStorage
-    val disneyHard = movieState.disneyHardTileStorage
-    val superHeroEasy = movieState.superheroEasyTileStorage
 
-    var set: MutableSet<Int> = mutableSetOf()
-
-    if (movieID == 1) {
-        set = disneyEasy.toMutableSet()
-    } else if (movieID == 2) {
-        set = disneyMedium.toMutableSet()
-    } else if (movieID == 3) {
-        set = disneyHard.toMutableSet()
-    } else if (movieID == 4) {
-        set = superHeroEasy.toMutableSet()
+    val set = when(movieID) {
+        1 -> movieState.disneyEasyTileStorage
+        2 -> movieState.disneyMediumTileStorage
+        3 -> movieState.disneyHardTileStorage
+        4 -> movieState.superheroEasyTileStorage
+        else -> throw IllegalArgumentException("Invalid movieID: $movieID")
     }
     Surface(
         modifier

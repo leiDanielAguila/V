@@ -34,6 +34,7 @@ import com.example.v.R
 import com.example.v.Screen
 import com.example.v.data.AppDatabase
 import com.example.v.model.MovieViewModel
+import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.darkRed
@@ -219,9 +220,9 @@ fun MovieDisneyMediumMainScreen(
             Alignment.Center
         ) {
             AnimatedVisibility(
-                visible = showGameOver
+                visible = showGameOver && isWin
             ) {
-
+                SoundManager.win()
                 LottieAnimation(composition = confetti, iterations = 10)
             }
         }

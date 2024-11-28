@@ -423,10 +423,8 @@ class MovieViewModel(
 
         if (movieLives == 0) {
             gameOverStatus = 1
-            SoundManager.fail()
         } else if (movieIDSet == movieWords.size) {
             gameOverStatus = 2
-            SoundManager.win()
         }
 
         return gameOverStatus
