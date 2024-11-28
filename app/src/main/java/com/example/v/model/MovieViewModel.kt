@@ -379,10 +379,11 @@ class MovieViewModel(
         } else if (userInput in usedWords
             || userInput.isBlank()
             ) {
-            SoundManager.usedWord()
             isCorrect = false
+            SoundManager.usedWord()
             clearUserInput()
         } else {
+            isCorrect = false
             SoundManager.wrongSound()
             clearUserInput()
             removeOneLife(movieID)
