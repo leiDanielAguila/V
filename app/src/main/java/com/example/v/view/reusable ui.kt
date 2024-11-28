@@ -24,7 +24,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -46,6 +45,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -77,7 +77,6 @@ import com.example.v.ui.theme.anotherWhite
 import com.example.v.ui.theme.cream
 import com.example.v.ui.theme.darkGreen
 import com.example.v.ui.theme.darkYellow
-import com.example.v.ui.theme.heartRed
 import com.example.v.ui.theme.lightGreen
 import com.example.v.ui.theme.lightRed
 import com.example.v.ui.theme.onyx
@@ -268,11 +267,17 @@ fun ShowLevelButton(
 ) {
     // State to track the countdown
     var countdown by remember { mutableIntStateOf(9) }
+    var countdownColor by remember { mutableStateOf(onyx) }
+    var countdownFontSize by remember { mutableStateOf(18.sp) }
     val context = LocalContext.current
 
     // timer
     LaunchedEffect(key1 = countdown) {
         if (countdown > 0) {
+            if(countdown == 3) {
+                countdownColor = Color.Red
+                countdownFontSize = 25.sp
+            }
             delay(1000)
             countdown -= 1
         }
@@ -290,15 +295,8 @@ fun ShowLevelButton(
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(
                 text = "$countdown", // Display countdown number
-                color = onyx,
-                fontSize = 18.sp,
-                fontFamily = font
-            )
-            Spacer(modifier = Modifier.width(8.dp)) // Spacer between countdown and text
-            Text(
-                text = "Show Level",
-                color = onyx,
-                fontSize = 18.sp,
+                color = countdownColor,
+                fontSize = countdownFontSize,
                 fontFamily = font
             )
         }
@@ -351,7 +349,7 @@ fun GameHearts(
                     Icon(
                         painter = painterResource(R.drawable.baseline_heart_broken_24),
                         contentDescription = "Broken heart",
-                        tint = heartRed
+                        tint = Color.LightGray
                     )
                 }
             }

@@ -296,7 +296,11 @@ class MovieViewModel(
             disneyEasyWordCount = _movieState.value.disneyEasyWordCount,
             disneyMediumWordCount = _movieState.value.disneyMediumWordCount,
             disneyHardWordCount = _movieState.value.disneyHardWordCount,
-            superheroEasyWordCount = _movieState.value.superheroEasyWordCount
+            superheroEasyWordCount = _movieState.value.superheroEasyWordCount,
+            disneyEasyGameLives = _movieState.value.disneyEasyGameLives,
+            disneyMediumGameLives = _movieState.value.disneyMediumGameLives,
+            disneyHardGameLives = _movieState.value.disneyHardGameLives,
+            superheroEasyGameLives = _movieState.value.superheroEasyGameLives,
         )
         Log.d("Mapping", "Resulting MovieState: $result")
         return result
@@ -378,6 +382,7 @@ class MovieViewModel(
             SoundManager.wrongSound()
             clearUserInput()
             removeOneLife(movieID)
+            saveStateToDatabase()
         }
     }
 
@@ -458,10 +463,10 @@ class MovieViewModel(
         }
 
         when (movieID) {
-            1 -> _movieState.value = _movieState.value.copy(disneyEasyGameLives = _movieState.value.disneyEasyGameLives - 1)
-            2 -> _movieState.value = _movieState.value.copy(disneyMediumGameLives = _movieState.value.disneyMediumGameLives - 1)
-            3 -> _movieState.value = _movieState.value.copy(disneyHardGameLives = _movieState.value.disneyHardGameLives - 1)
-            4 -> _movieState.value = _movieState.value.copy(superheroEasyGameLives = _movieState.value.superheroEasyGameLives - 1)
+            1 -> _movieState.value.disneyEasyGameLives-=1
+            2 -> _movieState.value.disneyMediumGameLives-=1
+            3 -> _movieState.value.disneyHardGameLives-=1
+            4 -> _movieState.value.superheroEasyGameLives-=1
             else -> throw IllegalArgumentException("Invalid movieID: $movieID")
         }
     }
