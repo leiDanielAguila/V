@@ -61,6 +61,7 @@ fun MovieSuperHeroEasyMainScreen(
     val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
     val movieUiState by movieViewModel.movieUiState.collectAsState()
+    val movieState by movieViewModel.movieState.collectAsState()
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
 
@@ -74,12 +75,15 @@ fun MovieSuperHeroEasyMainScreen(
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
+    val gameFinished = movieState.superheroEasyFinished
 
-    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords, 4) == 1) {
+    val gameOverStatus = movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords, 4)
+
+    if (gameOverStatus== 1) {
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
-    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieSuperHeroEasyWords, 4) == 2) {
+    } else if (gameOverStatus == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
@@ -142,7 +146,8 @@ fun MovieSuperHeroEasyMainScreen(
             Alignment.TopCenter
         ) {
             GameHearts(
-                movieUiState = movieUiState
+                movieID = 4,
+                movieViewModel = movieViewModel
             )
         }
 

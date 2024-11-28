@@ -33,6 +33,7 @@ data class MovieUiState (
     var isGameOverAndWin: Boolean = false,
     var isGameOverAndLose: Boolean = false,
     var isCorrect: Boolean = false,
+    var isWrong: Boolean = false,
     var gameLives: Int = 3,
     var isDyslexicFontOn: Boolean = false,
 )

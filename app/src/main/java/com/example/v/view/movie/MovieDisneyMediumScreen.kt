@@ -59,7 +59,7 @@ fun MovieDisneyMediumMainScreen(
     val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
     val movieUiState by movieViewModel.movieUiState.collectAsState()
-
+    val movieState by movieViewModel.movieState.collectAsState()
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
 
@@ -73,12 +73,15 @@ fun MovieDisneyMediumMainScreen(
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
+    val gameFinished = movieState.disneyMediumFinished
 
-    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 2) == 1) {
+    val gameOverStatus = movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 2)
+
+    if (gameOverStatus == 1) {
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
-    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 2) == 2) {
+    } else if (gameOverStatus == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
@@ -141,7 +144,8 @@ fun MovieDisneyMediumMainScreen(
             Alignment.TopCenter
         ) {
             GameHearts(
-                movieUiState = movieUiState
+                movieID = 2,
+                movieViewModel = movieViewModel
             )
         }
 

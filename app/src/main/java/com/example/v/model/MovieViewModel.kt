@@ -41,6 +41,7 @@ class MovieViewModel(
     internal val gameTilesSuperHeroEasyCount = 181
 
     private var isCorrect = false
+    private var isWrong = false
 
 
     private val scoreIncrease = 10
@@ -58,6 +59,11 @@ class MovieViewModel(
     private var disneyMediumWordCount = 0
     private var disneyHardWordCount = 0
     private var superheroEasyWordCount = 0
+
+    private var disneyEasyGameLives = 3
+    private var disneyMediumGameLives = 3
+    private var disneyHardGameLives = 3
+    private var superheroEasyGameLives = 3
 
     var userInput by mutableStateOf("")
 
@@ -349,13 +355,13 @@ class MovieViewModel(
         movieID: Int
     ) {
 
-        val set = when (movieID) {
-            1 -> _movieState.value.disneyEasyTileStorage.toMutableSet()
-            2 -> _movieState.value.disneyMediumTileStorage.toMutableSet()
-            3 -> _movieState.value.disneyHardTileStorage.toMutableSet()
-            4 -> _movieState.value.superheroEasyTileStorage.toMutableSet()
-            else -> throw IllegalArgumentException("Invalid movieID: $movieID")
-        }
+//        val set = when (movieID) {
+//            1 -> _movieState.value.disneyEasyTileStorage.toMutableSet()
+//            2 -> _movieState.value.disneyMediumTileStorage.toMutableSet()
+//            3 -> _movieState.value.disneyHardTileStorage.toMutableSet()
+//            4 -> _movieState.value.superheroEasyTileStorage.toMutableSet()
+//            else -> throw IllegalArgumentException("Invalid movieID: $movieID")
+//        }
 
         if (userInput in movieWords.values
             && userInput !in usedWords) {
@@ -372,16 +378,15 @@ class MovieViewModel(
             clearUserInput()
         } else if (userInput in usedWords
             || userInput.isBlank()
-            || set in movieWords.keys
             ) {
             SoundManager.usedWord()
             isCorrect = false
             clearUserInput()
         } else {
-            isCorrect = false
             SoundManager.wrongSound()
             clearUserInput()
             removeOneLife(movieID)
+            updateState()
             saveStateToDatabase()
         }
     }
@@ -393,6 +398,25 @@ class MovieViewModel(
            3 -> _movieState.value.disneyHardWordCount+=1
            4 -> _movieState.value.superheroEasyWordCount+=1
        }
+    }
+    private fun removeOneLife(movieID: Int) {
+        val currentState = _movieState.value
+
+        val newLives = when(movieID) {
+            1 -> currentState.disneyEasyGameLives - 1
+            2 -> currentState.disneyMediumGameLives - 1
+            3 -> currentState.disneyHardGameLives - 1
+            4 -> currentState.superheroEasyGameLives - 1
+            else -> currentState.disneyEasyGameLives
+        }
+
+        // Ensure the new value is correctly set in the state
+        _movieState.value = currentState.copy(
+            disneyEasyGameLives = if (movieID == 1) newLives else currentState.disneyEasyGameLives,
+            disneyMediumGameLives = if (movieID == 2) newLives else currentState.disneyMediumGameLives,
+            disneyHardGameLives = if (movieID == 3) newLives else currentState.disneyHardGameLives,
+            superheroEasyGameLives = if (movieID == 4) newLives else currentState.superheroEasyGameLives
+        )
     }
 
     fun checkIfGameIsOver(
@@ -417,6 +441,8 @@ class MovieViewModel(
             4 -> currentState.superheroEasyGameLives
             else -> throw IllegalArgumentException("Invalid movieID: $movieID")
         }
+
+        Log.d("GameState", "MovieLives for movieID $movieID: $movieLives")
 
         // 1 is gameOver and lose
         // 2 is gameOver and win
@@ -452,23 +478,6 @@ class MovieViewModel(
         }
     }
 
-    private fun removeOneLife(movieID: Int) {
-        _movieUiState.update { currentState ->
-            currentState.copy(
-                gameLives = currentState.gameLives - 1,
-                isCorrect = false
-            )
-        }
-
-        when (movieID) {
-            1 -> _movieState.value.disneyEasyGameLives-=1
-            2 -> _movieState.value.disneyMediumGameLives-=1
-            3 -> _movieState.value.disneyHardGameLives-=1
-            4 -> _movieState.value.superheroEasyGameLives-=1
-            else -> throw IllegalArgumentException("Invalid movieID: $movieID")
-        }
-    }
-
     private fun updateState() {
         _movieUiState.update { currentState ->
             currentState.copy(
@@ -479,10 +488,15 @@ class MovieViewModel(
                 superheroEasyTileStorage = superheroEasyTileStorage,
                 wordCount = updatedWordCount,
                 isCorrect = isCorrect,
+                isWrong = isWrong,
                 disneyEasyWordCount = disneyEasyWordCount,
                 disneyMediumWordCount = disneyMediumWordCount,
                 disneyHardWordCount = disneyHardWordCount,
-                superheroEasyWordCount = superheroEasyWordCount
+                superheroEasyWordCount = superheroEasyWordCount,
+                disneyEasyGameLives = disneyEasyGameLives,
+                disneyMediumGameLives = disneyMediumGameLives,
+                disneyHardGameLives = disneyHardGameLives,
+                superheroEasyGameLives = superheroEasyGameLives
             )
         }
     }

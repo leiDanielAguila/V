@@ -1,5 +1,6 @@
 package com.example.v.view.movie
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -68,6 +69,7 @@ fun MovieEasyMainScreen(
     val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
     val movieViewModel = remember { MovieViewModel(movieDao) }
     val movieUiState by movieViewModel.movieUiState.collectAsState()
+    val movieState by movieViewModel.movieState.collectAsState()
     var isHintVisible by remember { mutableStateOf(false) }
     var isSettingVisible by remember { mutableStateOf(false) }
 
@@ -75,18 +77,26 @@ fun MovieEasyMainScreen(
     var gameOverText by remember { mutableStateOf("") }
     var gameOverColor by remember { mutableStateOf(lightGreen) }
     var isWin by remember { mutableStateOf(false) }
+    var isLose by remember { mutableStateOf(false) }
 
     val boxColor by remember { mutableStateOf(Color.White) }
     var showGameOver by remember { mutableStateOf(false) }
 
     val confetti by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.confetti))
 
+    var gameFinished = movieState.disneyEasyFinished
+
+    val gameOverStatus = movieViewModel.checkIfGameIsOver(movieViewModel.movieEasyWords, 1)
+
+    Log.d("GameState", "Game Over Status: $gameOverStatus")
+
 // game over logic change .movieEasyWords to its appropriate difficulty level
-    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieEasyWords, 1) == 1) {
+    if (gameOverStatus == 1) {
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
-    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieEasyWords, 1) == 2) {
+        isLose = true
+    } else if (gameOverStatus == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
@@ -97,6 +107,8 @@ fun MovieEasyMainScreen(
         if (isGameOver) {
             delay(2000)
             showGameOver = true
+            delay(9000)
+            showGameOver = false
         } else {
             showGameOver = false
         }
@@ -149,7 +161,8 @@ fun MovieEasyMainScreen(
             Alignment.TopCenter
         ) {
             GameHearts(
-                movieUiState = movieUiState
+                movieID = 1,
+                movieViewModel = movieViewModel
             )
         }
 
@@ -195,8 +208,8 @@ fun MovieEasyMainScreen(
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
-                        movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 1)
                         movieViewModel.checkUserInput(movieWords = movieViewModel.movieEasyWords,1)
+                        movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyMediumWords, 1)
                     },
                 )
             }

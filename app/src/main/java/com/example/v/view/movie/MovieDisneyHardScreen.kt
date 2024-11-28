@@ -1,5 +1,6 @@
 package com.example.v.view.movie
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -70,6 +71,7 @@ fun MovieDisneyHardMainScreen(
     var gameOverText by remember { mutableStateOf("") }
     var gameOverColor by remember { mutableStateOf(lightGreen) }
     var isWin by remember { mutableStateOf(false) }
+    var isLose by remember { mutableStateOf(false) }
     var showGameOver by remember { mutableStateOf(false) }
 
     val boxColor by remember { mutableStateOf(Color.White) }
@@ -78,18 +80,20 @@ fun MovieDisneyHardMainScreen(
 
     var gameFinished = movieState.disneyHardFinished
 
-    if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords, 3) == 1) {
+    val gameOverStatus = movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords, 3)
+
+    Log.d("GameState", "Game Over Status: $gameOverStatus")
+
+    if (gameOverStatus == 1) {
         isGameOver = true
         gameOverText = "Game Over"
         gameOverColor = darkRed
-
-
-    } else if (movieViewModel.checkIfGameIsOver(movieViewModel.movieDisneyHardWords, 3) == 2) {
+        isLose = true
+    } else if (gameOverStatus == 2) {
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
         isWin = true
-
     }
 
     LaunchedEffect(isGameOver) {
@@ -152,7 +156,8 @@ fun MovieDisneyHardMainScreen(
             Alignment.TopCenter
         ) {
             GameHearts(
-                movieUiState = movieUiState
+                movieID = 3,
+                movieViewModel = movieViewModel
             )
         }
 
