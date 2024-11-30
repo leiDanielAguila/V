@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.v.Screen
 import com.example.v.data.MovieState
 import com.example.v.data.MovieUiState
 import com.example.v.service.SoundManager
@@ -42,7 +43,7 @@ class MovieViewModel(
 
     private var isCorrect = false
     private var isWrong = false
-
+    private var isBought = false
 
     private val scoreIncrease = 10
     private var updatedScore = 0
@@ -274,14 +275,17 @@ class MovieViewModel(
         }
     }
 
+    private var newScore: Int = 0
+
     private fun mapUiStateToMovieState(uiState: MovieUiState): MovieState {
         Log.d("Mapping", "Mapping UiState: $uiState")
 
-        val newScore = if (isCorrect) {
+        newScore = if (isCorrect) {
             _movieState.value.userScore + scoreIncrease
         } else {
             _movieState.value.userScore
         }
+
         val hardTileStorage = _movieState.value.disneyHardTileStorage + uiState.disneyHardTileStorage
         val mediumTileStorage = _movieState.value.disneyMediumTileStorage + uiState.disneyMediumTileStorage
         val easyTileStorage = _movieState.value.disneyEasyTileStorage + uiState.disneyEasyTileStorage
@@ -307,6 +311,9 @@ class MovieViewModel(
             disneyMediumGameLives = _movieState.value.disneyMediumGameLives,
             disneyHardGameLives = _movieState.value.disneyHardGameLives,
             superheroEasyGameLives = _movieState.value.superheroEasyGameLives,
+            disneyMediumUnlocked = _movieState.value.disneyMediumUnlocked,
+            disneyHardUnlocked = _movieState.value.disneyHardUnlocked,
+            superheroEasyUnlocked = _movieState.value.superheroEasyUnlocked
         )
         Log.d("Mapping", "Resulting MovieState: $result")
         return result
@@ -392,8 +399,41 @@ class MovieViewModel(
         }
     }
 
-    fun buyDifficulty() {
+    fun buyDifficulty(screenToBuy: Screen?) {
+        val currentScore = _movieState.value.userScore // Get the current score once
 
+        when {
+            screenToBuy == Screen.MovieSuperHeroEasy && currentScore >= 100 -> {
+                _movieState.value = _movieState.value.copy(
+                    userScore = currentScore - 100,
+                    superheroEasyUnlocked = true
+                )
+            }
+            screenToBuy == Screen.MovieScifiEasy && currentScore >= 100 -> {
+                _movieState.value = _movieState.value.copy(
+                    userScore = currentScore - 100
+                    // Uncomment when scifiEasyUnlocked is implemented
+                    // scifiEasyUnlocked = true
+                )
+            }
+            screenToBuy == Screen.MovieDisneyMedium && currentScore >= 60 -> {
+                _movieState.value = _movieState.value.copy(
+                    userScore = currentScore - 60,
+                    disneyMediumUnlocked = true
+                )
+            }
+            screenToBuy == Screen.MovieDisneyHard && currentScore >= 40 -> {
+                _movieState.value = _movieState.value.copy(
+                    userScore = currentScore - 40,
+                    disneyHardUnlocked = true
+                )
+            }
+            else -> {
+                Log.w("BuyDifficulty", "Purchase failed: Insufficient score or invalid screen.")
+            }
+        }
+
+        saveStateToDatabase()
     }
 
     private fun updateWordCount(movieID: Int) {

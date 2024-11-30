@@ -167,7 +167,8 @@ fun GenreScreen(
             AnimatedVisibility(visible = openBuyScreen) {
                 BuyScreen(
                     openBuyScreen = openBuyScreen,
-                    openBuyScreenChange = ({openBuyScreen = it})
+                    openBuyScreenChange = ({openBuyScreen = it}),
+                    screenToBuy = screenToBuy
                 )
             }
         }

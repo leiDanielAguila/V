@@ -94,5 +94,6 @@ enum class Screen(val route: String) {
     MovieDisneyMedium("MovieDisneyMedium"),
     MovieDisneyHard("MovieDisneyHard"),
     GenreScreen("GenreScreen"),
-    MovieSuperHeroEasy("MovieSuperHeroEasy")
+    MovieSuperHeroEasy("MovieSuperHeroEasy"),
+    MovieScifiEasy("MovieScifiEasy")
 }

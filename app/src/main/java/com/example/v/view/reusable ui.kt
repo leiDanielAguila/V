@@ -112,15 +112,32 @@ fun ReusableNavigationButton(
 fun BuyScreen(
     modifier: Modifier = Modifier,
     openBuyScreen: Boolean,
-    openBuyScreenChange: (Boolean) -> Unit
+    openBuyScreenChange: (Boolean) -> Unit,
+    screenToBuy: Screen?
 ) {
+
+    val context = LocalContext.current
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
+    val movieViewModel = remember { MovieViewModel(movieDao) }
+    val movieState by movieViewModel.movieState.collectAsState()
+
+    var movieValue by remember { mutableIntStateOf(0) }
+
+    movieValue = when (screenToBuy)  {
+        Screen.MovieDisneyMedium -> 60
+        Screen.MovieSuperHeroEasy -> 100
+        Screen.MovieDisneyHard -> 40
+        // for scifi
+        else -> throw IllegalArgumentException("Invalid screen")
+    }
+
     Box(
         modifier.size(320.dp)
             .clip(shape = RoundedCornerShape(15.dp))
             .background(BackgroundScreenColor)
     ) {
         Column(
-            modifier.fillMaxSize().padding(22.dp),
+            modifier.fillMaxSize().padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -132,7 +149,7 @@ fun BuyScreen(
             )
 
             Text(
-                text = "Required for this difficulty",
+                text = "${movieValue} user score required for this difficulty",
                 color = Color.White,
                 fontFamily = Lalezar,
                 fontSize = 16.sp
@@ -144,7 +161,10 @@ fun BuyScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Button(
-                    onClick = {},
+                    onClick = {
+                        movieViewModel.buyDifficulty(screenToBuy = screenToBuy)
+                        openBuyScreenChange(!openBuyScreen) // to exit after buying
+                    },
                     colors = ButtonDefaults.buttonColors(lightGreen)
                 ) {
                     Text(
@@ -190,9 +210,9 @@ fun DifficultySelector(
     val movieViewModel = remember { MovieViewModel(movieDao) }
     val movieState by movieViewModel.movieState.collectAsState()
 
-    val isDisneyMediumUnlocked by remember { mutableStateOf(movieState.disneyMediumUnlocked) }
-    val isDisneyHardUnlocked by remember { mutableStateOf(movieState.disneyHardUnlocked) }
-    val isSuperheroEasyUnlocked by remember { mutableStateOf(movieState.superheroEasyUnlocked) }
+    val isDisneyMediumUnlocked = movieState.disneyMediumUnlocked
+    val isDisneyHardUnlocked = movieState.disneyHardUnlocked
+    val isSuperheroEasyUnlocked = movieState.superheroEasyUnlocked
 
     AnimatedVisibility(
         visible = onClick,
@@ -244,7 +264,7 @@ fun DifficultySelector(
                         SoundManager.clickSound()
                         if (!isSuperheroEasyUnlocked && easyScreen != Screen.MovieEasy) {
                             openBuyClickChange(!openBuyClick)
-                            screenToBuyChange(mediumScreen)
+                            screenToBuyChange(easyScreen)
                         } else if (easyScreen != null) {
                             navController.navigate(easyScreen.route)
                         } else {
@@ -280,8 +300,13 @@ fun DifficultySelector(
                 Button(
                     onClick = {
                         SoundManager.clickSound()
-                        if (hardScreen != null) {
-                            navController.navigate(hardScreen.route)
+                        if (!isDisneyHardUnlocked) {
+                            openBuyClickChange(!openBuyClick)
+                            screenToBuyChange(hardScreen)
+                        } else if (hardScreen != null) {
+                            navController.navigate(hardScreen)
+                        } else {
+                            throw IllegalArgumentException("Invalid mediumScreen value or buy screen error")
                         }
                     },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),
