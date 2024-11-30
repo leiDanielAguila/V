@@ -1,5 +1,6 @@
 package com.example.v.view
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -135,6 +136,13 @@ fun GenreScreen(
             }
         }
 
+        var openBuyScreen by remember { mutableStateOf(false) }
+        var screenToBuy: Screen? by remember { mutableStateOf(Screen.MainMenu) }
+
+//        LaunchedEffect(screenToBuy) {
+//            Log.d("ScreenToBuyTracker", "screenToBuy changed to: ${screenToBuy?.route ?: "null"}")
+//        }
+
         Box(modifier = Modifier.fillMaxSize()) {
             DifficultySelector(
                 onClick = onClick,
@@ -142,8 +150,26 @@ fun GenreScreen(
                 navController = navController,
                 easyScreen = easyScreen,
                 mediumScreen = mediumScreen,
-                hardScreen = hardScreen
+                hardScreen = hardScreen,
+                openBuyClick = openBuyScreen,
+                openBuyClickChange = ({openBuyScreen = it}),
+                screenToBuy = screenToBuy,
+                screenToBuyChange = {screenToBuyChange ->
+                    screenToBuy = screenToBuyChange
+                }
             )
+        }
+
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            Alignment.Center
+        ) {
+            AnimatedVisibility(visible = openBuyScreen) {
+                BuyScreen(
+                    openBuyScreen = openBuyScreen,
+                    openBuyScreenChange = ({openBuyScreen = it})
+                )
+            }
         }
     }
 }

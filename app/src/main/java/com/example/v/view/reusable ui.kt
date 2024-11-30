@@ -110,7 +110,9 @@ fun ReusableNavigationButton(
 
 @Composable
 fun BuyScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    openBuyScreen: Boolean,
+    openBuyScreenChange: (Boolean) -> Unit
 ) {
     Box(
         modifier.size(320.dp)
@@ -152,7 +154,9 @@ fun BuyScreen(
                     )
                 }
                 Button(
-                    onClick = {},
+                    onClick = {
+                        openBuyScreenChange(!openBuyScreen)
+                    },
                     colors = ButtonDefaults.buttonColors(Color.Red)
                 ) {
                     Text(
@@ -171,7 +175,11 @@ fun DifficultySelector(
     modifier: Modifier = Modifier,
     onClick: Boolean,
     onClickChange: (Boolean) -> Unit,
+    openBuyClick: Boolean,
+    openBuyClickChange: (Boolean) -> Unit,
     navController: NavController,
+    screenToBuy: Screen?,
+    screenToBuyChange: (Screen?) -> Unit,
     easyScreen: Screen?,
     mediumScreen: Screen?,
     hardScreen: Screen?
@@ -184,13 +192,7 @@ fun DifficultySelector(
 
     val isDisneyMediumUnlocked by remember { mutableStateOf(movieState.disneyMediumUnlocked) }
     val isDisneyHardUnlocked by remember { mutableStateOf(movieState.disneyHardUnlocked) }
-    val superheroEasyUnlocked by remember { mutableStateOf(movieState.superheroEasyUnlocked) }
-
-    var openBuyScreen by remember { mutableStateOf(false) }
-
-    AnimatedVisibility(openBuyScreen) {
-        BuyScreen()
-    }
+    val isSuperheroEasyUnlocked by remember { mutableStateOf(movieState.superheroEasyUnlocked) }
 
     AnimatedVisibility(
         visible = onClick,
@@ -240,8 +242,13 @@ fun DifficultySelector(
                 Button(
                     onClick = {
                         SoundManager.clickSound()
-                        if (easyScreen != null) {
+                        if (!isSuperheroEasyUnlocked && easyScreen != Screen.MovieEasy) {
+                            openBuyClickChange(!openBuyClick)
+                            screenToBuyChange(mediumScreen)
+                        } else if (easyScreen != null) {
                             navController.navigate(easyScreen.route)
+                        } else {
+                            throw IllegalArgumentException("Invalid mediumScreen value or buy screen error")
                         }
                     },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),
@@ -255,9 +262,12 @@ fun DifficultySelector(
                     onClick = {
                         SoundManager.clickSound()
                         if (!isDisneyMediumUnlocked) {
-                            openBuyScreen = true
+                            openBuyClickChange(!openBuyClick)
+                            screenToBuyChange(mediumScreen)
                         } else if (mediumScreen != null) {
                             navController.navigate(mediumScreen.route)
+                        } else {
+                            throw IllegalArgumentException("Invalid mediumScreen value or buy screen error")
                         }
                     },
                     elevation = ButtonDefaults.elevatedButtonElevation(20.dp),

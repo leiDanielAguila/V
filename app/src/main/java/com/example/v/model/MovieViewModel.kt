@@ -392,6 +392,10 @@ class MovieViewModel(
         }
     }
 
+    fun buyDifficulty() {
+
+    }
+
     private fun updateWordCount(movieID: Int) {
        when (movieID) {
            1 -> _movieState.value.disneyEasyWordCount+=1
@@ -400,6 +404,7 @@ class MovieViewModel(
            4 -> _movieState.value.superheroEasyWordCount+=1
        }
     }
+
     private fun removeOneLife(movieID: Int) {
         val currentState = _movieState.value
 
