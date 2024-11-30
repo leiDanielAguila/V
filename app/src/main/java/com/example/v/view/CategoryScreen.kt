@@ -87,8 +87,6 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
         ) {
             TechnologyCard()
         }
-
-
     }
 }
 

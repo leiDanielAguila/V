@@ -13,7 +13,7 @@ data class MovieState(
     var superheroEasyTileStorage: MutableSet<Int> = mutableSetOf(),
     var scifiEasyTileStorage: MutableSet<Int> = mutableSetOf(),
 
-
+    var disneyHardUnlocked: Boolean = false,
     var disneyMediumUnlocked: Boolean = false,
     var superheroEasyUnlocked: Boolean = false,
     var scifiEasyUnlocked: Boolean = false,

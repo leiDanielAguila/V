@@ -70,6 +70,7 @@ import com.example.v.Screen
 import com.example.v.data.AppDatabase
 import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
+import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.Yellow
@@ -108,6 +109,64 @@ fun ReusableNavigationButton(
 }
 
 @Composable
+fun BuyScreen(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier.size(320.dp)
+            .clip(shape = RoundedCornerShape(15.dp))
+            .background(BackgroundScreenColor)
+    ) {
+        Column(
+            modifier.fillMaxSize().padding(22.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Text(
+                text = "Unlock difficulty?",
+                color = cream,
+                fontFamily = Spenbeb,
+                fontSize = 22.sp
+            )
+
+            Text(
+                text = "Required for this difficulty",
+                color = Color.White,
+                fontFamily = Lalezar,
+                fontSize = 16.sp
+            )
+
+            Row(
+                modifier.fillMaxSize(),
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Button(
+                    onClick = {},
+                    colors = ButtonDefaults.buttonColors(lightGreen)
+                ) {
+                    Text(
+                        text = "Yes",
+                        fontSize = 18.sp,
+                        fontFamily = Spenbeb
+                    )
+                }
+                Button(
+                    onClick = {},
+                    colors = ButtonDefaults.buttonColors(Color.Red)
+                ) {
+                    Text(
+                        text = "No",
+                        fontSize = 18.sp,
+                        fontFamily = Spenbeb
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun DifficultySelector(
     modifier: Modifier = Modifier,
     onClick: Boolean,
@@ -117,6 +176,22 @@ fun DifficultySelector(
     mediumScreen: Screen?,
     hardScreen: Screen?
 ) {
+
+    val context = LocalContext.current
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
+    val movieViewModel = remember { MovieViewModel(movieDao) }
+    val movieState by movieViewModel.movieState.collectAsState()
+
+    val isDisneyMediumUnlocked by remember { mutableStateOf(movieState.disneyMediumUnlocked) }
+    val isDisneyHardUnlocked by remember { mutableStateOf(movieState.disneyHardUnlocked) }
+    val superheroEasyUnlocked by remember { mutableStateOf(movieState.superheroEasyUnlocked) }
+
+    var openBuyScreen by remember { mutableStateOf(false) }
+
+    AnimatedVisibility(openBuyScreen) {
+        BuyScreen()
+    }
+
     AnimatedVisibility(
         visible = onClick,
         enter = slideInHorizontally{ it },
@@ -179,7 +254,9 @@ fun DifficultySelector(
                 Button(
                     onClick = {
                         SoundManager.clickSound()
-                        if (mediumScreen != null) {
+                        if (!isDisneyMediumUnlocked) {
+                            openBuyScreen = true
+                        } else if (mediumScreen != null) {
                             navController.navigate(mediumScreen.route)
                         }
                     },

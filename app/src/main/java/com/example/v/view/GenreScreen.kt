@@ -25,11 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.example.v.R
 import com.example.v.Screen
 import com.example.v.ui.theme.Spenbeb
@@ -151,7 +149,7 @@ fun GenreScreen(
 }
 
 @Composable
-fun AnimationGenreButton(
+fun AnimationGenreButton( // DISNEY
     font: FontFamily,
     onClick: Boolean,
     onClickChange: (Boolean) -> Unit,
@@ -164,7 +162,7 @@ fun AnimationGenreButton(
             .clickable {
                 animationClickChange(!animationClick)
                 onClickChange(!onClick)
-                       },
+            },
         colors = CardDefaults.cardColors(lightBlue),
         elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
     ) {
@@ -206,7 +204,7 @@ fun SciFiGenreButton(
             .size(width = 300.dp, height = 93.dp)
             .clickable {
                 navController.navigate(Screen.CategoryScreen)
-                       },
+            },
         colors = CardDefaults.cardColors(Color.LightGray),
         elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
     ) {
@@ -251,7 +249,7 @@ fun SuperheroGenreButton(
             .clickable {
                 superheroClickChange(!superheroClick)
                 onClickChange(!onClick)
-                       },
+            },
         colors = CardDefaults.cardColors(darkRed),
         elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
     ) {
@@ -280,10 +278,4 @@ fun SuperheroGenreButton(
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun GenreScreenPreview() {
-    GenreScreen(navController = rememberNavController())
 }
