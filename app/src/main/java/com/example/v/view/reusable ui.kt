@@ -304,7 +304,7 @@ fun DifficultySelector(
                             openBuyClickChange(!openBuyClick)
                             screenToBuyChange(hardScreen)
                         } else if (hardScreen != null) {
-                            navController.navigate(hardScreen)
+                            navController.navigate(hardScreen.route)
                         } else {
                             throw IllegalArgumentException("Invalid mediumScreen value or buy screen error")
                         }
@@ -594,8 +594,8 @@ fun GameTiles(
     ) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(gridCount),
-            verticalArrangement = Arrangement.spacedBy(3.dp),
-            horizontalArrangement = Arrangement.spacedBy(3.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
+            horizontalArrangement = Arrangement.spacedBy(2.dp),
             modifier = Modifier
                 .fillMaxSize()
                 .padding(12.dp)

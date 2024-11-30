@@ -34,7 +34,6 @@ import com.example.v.R
 import com.example.v.Screen
 import com.example.v.data.AppDatabase
 import com.example.v.model.MovieViewModel
-import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.darkRed
@@ -143,7 +142,7 @@ fun MovieDisneyMediumMainScreen(
         Box(
             modifier
                 .fillMaxSize()
-                .padding(top = 140.dp),
+                .padding(top = 125.dp),
             Alignment.TopCenter
         ) {
             GameHearts(
@@ -171,17 +170,17 @@ fun MovieDisneyMediumMainScreen(
         }
 
         Box(
-            modifier.fillMaxSize().padding(bottom = 60.dp),
-            Alignment.BottomCenter
+            modifier.fillMaxSize().padding(top = 150.dp),
+            Alignment.Center
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 GameTiles(
                     movieViewModel = movieViewModel,
-                    outerBoxWidth = 340.dp,
-                    outerBoxHeight = 550.dp,
-                    textBoxWidth = 30.dp,
+                    outerBoxWidth = 350.dp,
+                    outerBoxHeight = 535.dp,
+                    textBoxWidth = 20.dp,
                     textBoxHeight = 30.dp,
                     tilesCount = movieViewModel.gameTilesDisneyMediumCount,
                     movieTiles = movieViewModel.movieDisneyMediumTiles,
@@ -190,7 +189,7 @@ fun MovieDisneyMediumMainScreen(
                     boxColor = boxColor,
                     movieID = 2
                 )
-                Spacer(modifier.height(22.dp))
+                Spacer(modifier.height(12.dp))
                 TextFieldInput(
                     movieViewModel = movieViewModel,
                     onDone = {
@@ -231,7 +230,6 @@ fun MovieDisneyMediumMainScreen(
             AnimatedVisibility(
                 visible = showGameOver && isWin
             ) {
-                SoundManager.win()
                 LottieAnimation(composition = confetti, iterations = 10)
             }
         }

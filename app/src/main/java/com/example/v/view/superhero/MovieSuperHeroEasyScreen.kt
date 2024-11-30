@@ -176,7 +176,7 @@ fun MovieSuperHeroEasyMainScreen(
         }
 
         Box(
-            modifier.fillMaxSize().padding(bottom = 140.dp),
+            modifier.fillMaxSize().padding(bottom = 110.dp),
             Alignment.BottomCenter
         ) {
             Column(
@@ -185,8 +185,8 @@ fun MovieSuperHeroEasyMainScreen(
                 GameTiles(
                     movieViewModel = movieViewModel,
                     outerBoxWidth = 390.dp,
-                    outerBoxHeight = 450.dp,
-                    textBoxWidth = 20.dp,
+                    outerBoxHeight = 440.dp,
+                    textBoxWidth = 30.dp,
                     textBoxHeight = 30.dp,
                     tilesCount = movieViewModel.gameTilesSuperHeroEasyCount,
                     movieTiles = movieViewModel.movieSuperHeroEasyTiles,

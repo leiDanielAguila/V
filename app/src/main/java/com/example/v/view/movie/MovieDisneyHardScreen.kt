@@ -36,7 +36,6 @@ import com.example.v.R
 import com.example.v.Screen
 import com.example.v.data.AppDatabase
 import com.example.v.model.MovieViewModel
-import com.example.v.service.SoundManager
 import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.darkRed
@@ -182,8 +181,8 @@ fun MovieDisneyHardMainScreen(
         }
 
         Box(
-            modifier.fillMaxSize().padding(),
-            Alignment.Center
+            modifier.fillMaxSize().padding(bottom = 100.dp),
+            Alignment.BottomCenter
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally
@@ -242,7 +241,6 @@ fun MovieDisneyHardMainScreen(
             AnimatedVisibility(
                 visible = showGameOver && isWin
             ) {
-                SoundManager.win()
                 LottieAnimation(composition = confetti, iterations = 10)
             }
         }

@@ -243,7 +243,6 @@ fun MovieEasyMainScreen(
             AnimatedVisibility(
                 visible = showGameOver && isWin
             ) {
-                SoundManager.win()
                 LottieAnimation(composition = confetti, iterations = 10)
             }
         }

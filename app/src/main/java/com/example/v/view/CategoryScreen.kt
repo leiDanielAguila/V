@@ -6,7 +6,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
@@ -18,6 +20,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -30,14 +33,17 @@ import com.airbnb.lottie.compose.animateLottieCompositionAsState
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.v.R
 import com.example.v.Screen
+import com.example.v.data.AppDatabase
+import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.BackgroundScreenColor
 
 @Composable
 fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) {
 
-    var onClick by remember { mutableStateOf(false) }
-
+    val context = LocalContext.current
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
+    val movieViewModel = remember { MovieViewModel(movieDao) }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -53,14 +59,22 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 16.dp, vertical = 36.dp),
+                .padding(horizontal = 16.dp, vertical = 26.dp),
         ) {
-            ReusableNavigationButton(
-                Screen.MainMenu,
-                textInButton = "Back",
-                fontSize = 32.sp,
-                navController
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment =  Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                ReusableNavigationButton(
+                    Screen.MainMenu,
+                    textInButton = "Back",
+                    fontSize = 32.sp,
+                    navController
+                )
+
+                ScoreCard(movieViewModel = movieViewModel)
+            }
         }
 
         Column(
