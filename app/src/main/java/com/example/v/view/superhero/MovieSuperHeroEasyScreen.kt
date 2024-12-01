@@ -48,6 +48,7 @@ import com.example.v.view.HintNotes
 import com.example.v.view.MovieTicketHeader
 import com.example.v.view.ReusableNavigationButton
 import com.example.v.view.ScoreCard
+import com.example.v.view.Settings
 import com.example.v.view.TextFieldInput
 import com.example.v.view.movie.SelectionBars
 import kotlinx.coroutines.delay
@@ -258,6 +259,18 @@ fun MovieSuperHeroEasyMainScreen(
                     movieViewModel = movieViewModel,
                     movieHint = movieViewModel.movieSuperHeroHints, // change depending on the difficulty level
                     movieYear = movieViewModel.movieSuperHeroYears // change depending on movies
+                )
+            }
+        }
+
+        Box(
+            modifier.fillMaxSize(),
+            Alignment.Center
+        ) {
+            AnimatedVisibility(visible = isSettingVisible) {
+                Settings (
+                    isSettingOpen = isSettingVisible,
+                    isSettingOpenChange = ({isSettingVisible = it})
                 )
             }
         }

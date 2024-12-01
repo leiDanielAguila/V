@@ -46,6 +46,7 @@ import com.example.v.view.HintNotes
 import com.example.v.view.MovieTicketHeader
 import com.example.v.view.ReusableNavigationButton
 import com.example.v.view.ScoreCard
+import com.example.v.view.Settings
 import com.example.v.view.TextFieldInput
 import kotlinx.coroutines.delay
 
@@ -253,6 +254,18 @@ fun MovieDisneyMediumMainScreen(
                     movieViewModel = movieViewModel,
                     movieHint = movieViewModel.movieDisneyMediumHints, // change depending on the difficulty level
                     movieYear = movieViewModel.movieDisneyMediumYears // change depending on movies
+                )
+            }
+        }
+
+        Box(
+            modifier.fillMaxSize(),
+            Alignment.Center
+        ) {
+            AnimatedVisibility(visible = isSettingVisible) {
+                Settings (
+                    isSettingOpen = isSettingVisible,
+                    isSettingOpenChange = ({isSettingVisible = it})
                 )
             }
         }

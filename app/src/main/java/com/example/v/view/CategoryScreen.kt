@@ -156,6 +156,8 @@ fun TechnologyCard() {
 
     val lock by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lock))
 
+    // var isGameCompleted
+
     var isPlaying by remember {mutableStateOf(false)}
 
     val progress by animateLottieCompositionAsState(
