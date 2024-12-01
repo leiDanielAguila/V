@@ -70,6 +70,9 @@ class MainActivity : ComponentActivity() {
                         composable(Screen.MovieSuperHeroEasy.route) {
                             MovieSuperHeroEasyMainScreen(navController = navController)
                         }
+                        composable(Screen.GameEnd.route) {
+                            GameEnd(navController = navController)
+                        }
                     }
                 }
             }
@@ -95,5 +98,6 @@ enum class Screen(val route: String) {
     MovieDisneyHard("MovieDisneyHard"),
     GenreScreen("GenreScreen"),
     MovieSuperHeroEasy("MovieSuperHeroEasy"),
-    MovieScifiEasy("MovieScifiEasy")
+    MovieScifiEasy("MovieScifiEasy"),
+    GameEnd("GameEnd")
 }

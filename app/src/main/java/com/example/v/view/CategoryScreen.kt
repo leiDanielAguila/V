@@ -101,7 +101,7 @@ fun CategoryScreen(modifier: Modifier = Modifier, navController: NavController) 
             verticalArrangement = Arrangement.Center,
             // verticalArrangement = Arrangement.SpaceEvenly,
         ) {
-            TechnologyCard()
+            TechnologyCard(navController)
         }
     }
 }
@@ -154,7 +154,7 @@ fun MovieCard(
 
 
 @Composable
-fun TechnologyCard() {
+fun TechnologyCard(navController: NavController) {
 
     val context = LocalContext.current
     val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
@@ -189,7 +189,11 @@ fun TechnologyCard() {
     Box(
         modifier = Modifier
             .clickable {
-                isPlaying = true
+                if (!isGameCompleted) {
+                    isPlaying = true
+                } else {
+                    navController.navigate(Screen.GameEnd.route)
+                }
             }
             .size(width = 294.dp, height = 140.dp)
     ) {
