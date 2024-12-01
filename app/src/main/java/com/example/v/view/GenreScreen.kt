@@ -13,24 +13,33 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.v.R
 import com.example.v.Screen
+import com.example.v.service.SoundManager
+import com.example.v.ui.theme.BackgroundScreenColor
+import com.example.v.ui.theme.Lalezar
 import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.anotherWhite
 import com.example.v.ui.theme.cream
@@ -41,6 +50,7 @@ import com.example.v.ui.theme.marvel
 import com.example.v.ui.theme.navyBlue
 import com.example.v.ui.theme.onyx
 import com.example.v.ui.theme.scifi
+import kotlinx.coroutines.delay
 
 @Composable
 fun GenreScreen(
@@ -139,6 +149,9 @@ fun GenreScreen(
         var openBuyScreen by remember { mutableStateOf(false) }
         var screenToBuy: Screen? by remember { mutableStateOf(Screen.MainMenu) }
 
+        var thankYouModule by remember { mutableStateOf(false) }
+        var notEnoughUserScore by remember { mutableStateOf(false) }
+
 //        LaunchedEffect(screenToBuy) {
 //            Log.d("ScreenToBuyTracker", "screenToBuy changed to: ${screenToBuy?.route ?: "null"}")
 //        }
@@ -168,8 +181,82 @@ fun GenreScreen(
                 BuyScreen(
                     openBuyScreen = openBuyScreen,
                     openBuyScreenChange = ({openBuyScreen = it}),
-                    screenToBuy = screenToBuy
+                    screenToBuy = screenToBuy,
+                    thankYouModule = thankYouModule,
+                    thankYouModuleChange = ({thankYouModule = it}),
+                    notEnoughUserScore = notEnoughUserScore,
+                    notEnoughUserScoreChange = ({notEnoughUserScore = it})
                 )
+            }
+        }
+
+        val difficultyBought by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.difficultybought))
+
+        Box(modifier.fillMaxSize(), Alignment.Center) {
+            AnimatedVisibility(visible = thankYouModule) {
+                LaunchedEffect(thankYouModule) {
+                    if (thankYouModule) {
+                        SoundManager.win()
+                        delay(5000)
+                        thankYouModule = false
+                    }
+
+                }
+
+                Box(
+                    modifier
+                        .size(320.dp)
+                        .padding(12.dp)
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .background(BackgroundScreenColor),
+                    Alignment.Center
+                ) {
+                    LottieAnimation(
+                        composition = difficultyBought,
+                        iterations = 10
+                    )
+                    Column(
+                        modifier = Modifier.padding(12.dp).fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Text(
+                            text = "Difficulty unlocked!",
+                            color = Color.Green,
+                            fontFamily = Spenbeb,
+                            fontSize = 18.sp
+                        )
+                        Text(
+                            text = "Click difficulty again to play",
+                            color = cream,
+                            fontFamily = Lalezar,
+                            fontSize = 18.sp
+                        )
+                    }
+                }
+            }
+            AnimatedVisibility(visible = notEnoughUserScore) {
+                LaunchedEffect(notEnoughUserScore) {
+                    if (notEnoughUserScore) {
+                        SoundManager.usedWord()
+                        delay(3000)
+                        notEnoughUserScore = false
+                    }
+                }
+                Box(
+                    modifier.size(320.dp)
+                        .padding(12.dp)
+                        .clip(shape = RoundedCornerShape(15.dp))
+                        .background(BackgroundScreenColor),
+                    Alignment.Center
+                ) {
+                    Text(
+                        text = "Not enough user score",
+                        color = cream,
+                        fontFamily = Spenbeb,
+                        fontSize = 16.sp
+                    )
+                }
             }
         }
     }

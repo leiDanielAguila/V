@@ -399,15 +399,20 @@ class MovieViewModel(
         }
     }
 
-    fun buyDifficulty(screenToBuy: Screen?) {
+
+
+    fun buyDifficulty(screenToBuy: Screen?): Boolean {
         val currentScore = _movieState.value.userScore // Get the current score once
 
-        when {
+        return when {
             screenToBuy == Screen.MovieSuperHeroEasy && currentScore >= 100 -> {
                 _movieState.value = _movieState.value.copy(
                     userScore = currentScore - 100,
                     superheroEasyUnlocked = true
                 )
+                saveStateToDatabase()
+                Log.w("BuyDifficulty", "Purchase success")
+                true // Purchase succeeded
             }
             screenToBuy == Screen.MovieScifiEasy && currentScore >= 100 -> {
                 _movieState.value = _movieState.value.copy(
@@ -415,26 +420,35 @@ class MovieViewModel(
                     // Uncomment when scifiEasyUnlocked is implemented
                     // scifiEasyUnlocked = true
                 )
+                saveStateToDatabase()
+                Log.w("BuyDifficulty", "Purchase success")
+                true // Purchase succeeded
             }
             screenToBuy == Screen.MovieDisneyMedium && currentScore >= 60 -> {
                 _movieState.value = _movieState.value.copy(
                     userScore = currentScore - 60,
-                    disneyMediumUnlocked = true
+                    disneyMediumUnlocked = true,
                 )
+                saveStateToDatabase()
+                Log.w("BuyDifficulty", "Purchase success")
+                true // Purchase succeeded
             }
             screenToBuy == Screen.MovieDisneyHard && currentScore >= 40 -> {
                 _movieState.value = _movieState.value.copy(
                     userScore = currentScore - 40,
                     disneyHardUnlocked = true
                 )
+                saveStateToDatabase()
+                Log.w("BuyDifficulty", "Purchase success")
+                true // Purchase succeeded
             }
             else -> {
                 Log.w("BuyDifficulty", "Purchase failed: Insufficient score or invalid screen.")
+                false // Purchase failed
             }
         }
-
-        saveStateToDatabase()
     }
+
 
     private fun updateWordCount(movieID: Int) {
        when (movieID) {

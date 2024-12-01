@@ -1,5 +1,6 @@
 package com.example.v.view
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
@@ -60,6 +61,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
@@ -113,7 +115,11 @@ fun BuyScreen(
     modifier: Modifier = Modifier,
     openBuyScreen: Boolean,
     openBuyScreenChange: (Boolean) -> Unit,
-    screenToBuy: Screen?
+    screenToBuy: Screen?,
+    thankYouModule: Boolean,
+    thankYouModuleChange: (Boolean) -> Unit,
+    notEnoughUserScore: Boolean,
+    notEnoughUserScoreChange: (Boolean) -> Unit
 ) {
 
     val context = LocalContext.current
@@ -132,12 +138,15 @@ fun BuyScreen(
     }
 
     Box(
-        modifier.size(320.dp)
+        modifier
+            .size(320.dp)
             .clip(shape = RoundedCornerShape(15.dp))
             .background(BackgroundScreenColor)
     ) {
         Column(
-            modifier.fillMaxSize().padding(12.dp),
+            modifier
+                .fillMaxSize()
+                .padding(12.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
@@ -149,7 +158,7 @@ fun BuyScreen(
             )
 
             Text(
-                text = "${movieValue} user score required for this difficulty",
+                text = "$movieValue user score required for this difficulty",
                 color = Color.White,
                 fontFamily = Lalezar,
                 fontSize = 16.sp
@@ -162,7 +171,16 @@ fun BuyScreen(
             ) {
                 Button(
                     onClick = {
-                        movieViewModel.buyDifficulty(screenToBuy = screenToBuy)
+                        //movieViewModel.buyDifficulty(screenToBuy = screenToBuy)
+                        if (movieViewModel.buyDifficulty(screenToBuy)) { // purchased
+                            thankYouModuleChange(true)
+                            notEnoughUserScoreChange(false)
+                            Log.w("BuyScreen", "Purchased")
+                        } else { // !purchased
+                            notEnoughUserScoreChange(true)
+                            thankYouModuleChange(false)
+                            Log.w("BuyScreen", "Not purchased")
+                        }
                         openBuyScreenChange(!openBuyScreen) // to exit after buying
                     },
                     colors = ButtonDefaults.buttonColors(lightGreen)
@@ -276,6 +294,7 @@ fun DifficultySelector(
                 ) {
                     // easy button
                     Text("Easy", fontSize = 32.sp, fontFamily = Spenbeb)
+
                 }
 
                 Button(
@@ -295,6 +314,12 @@ fun DifficultySelector(
                 ) {
                     // medium button
                     Text("Medium", fontSize = 32.sp, fontFamily = Spenbeb)
+//                    AnimatedVisibility(visible = movieState.disneyMediumUnlocked) {
+//                        Icon(
+//                            painterResource(R.drawable.baseline_lock_24),
+//                            contentDescription = ""
+//                        )
+//                    }
                 }
 
                 Button(
@@ -314,6 +339,9 @@ fun DifficultySelector(
                 ) {
                     // hard button
                     Text("Hard", fontSize = 32.sp, fontFamily = Spenbeb)
+                    AnimatedVisibility(visible = isDisneyHardUnlocked) {
+
+                    }
                 }
             }
         }
@@ -779,5 +807,42 @@ fun HintNotes(
             }
         }
     }
+}
+
+@Composable
+fun ThankYouModule(modifier: Modifier = Modifier) {
+    Box(
+        modifier
+            .size(320.dp)
+            .padding(12.dp)
+            .clip(shape = RoundedCornerShape(15.dp))
+            .background(BackgroundScreenColor),
+        Alignment.Center
+    ) {
+        Column(
+            modifier = Modifier.padding(12.dp).fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Text(
+                text = "Difficulty unlocked!",
+                color = Color.Green,
+                fontFamily = Spenbeb,
+                fontSize = 22.sp
+            )
+            Text(
+                text = "Click difficulty again to play",
+                color = cream,
+                fontFamily = Lalezar,
+                fontSize = 18.sp
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun Thankyoumodule(modifier: Modifier = Modifier) {
+    ThankYouModule()
 }
 
