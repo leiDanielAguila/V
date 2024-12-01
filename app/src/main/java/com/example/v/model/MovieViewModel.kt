@@ -313,7 +313,12 @@ class MovieViewModel(
             superheroEasyGameLives = _movieState.value.superheroEasyGameLives,
             disneyMediumUnlocked = _movieState.value.disneyMediumUnlocked,
             disneyHardUnlocked = _movieState.value.disneyHardUnlocked,
-            superheroEasyUnlocked = _movieState.value.superheroEasyUnlocked
+            superheroEasyUnlocked = _movieState.value.superheroEasyUnlocked,
+            disneyEasyFinished = _movieState.value.disneyEasyFinished,
+            disneyMediumFinished = _movieState.value.disneyMediumFinished,
+            disneyHardFinished = _movieState.value.disneyHardFinished,
+            superheroEasyFinished = _movieState.value.superheroEasyFinished,
+            isDyslexicFontOn = _movieState.value.isDyslexicFontOn,
         )
         Log.d("Mapping", "Resulting MovieState: $result")
         return result
@@ -533,7 +538,20 @@ class MovieViewModel(
         return gameOverStatus
     }
 
+    fun changeFinishedState(movieID: Int) {
+        val currentState = _movieState.value
+        val newState = currentState.copy(
+            disneyEasyFinished = if (movieID == 1) true else currentState.disneyEasyFinished,
+            disneyMediumFinished = if (movieID == 2) true else currentState.disneyMediumFinished,
+            disneyHardFinished = if (movieID == 3) true else currentState.disneyHardFinished,
+            superheroEasyFinished = if (movieID == 4) true else currentState.superheroEasyFinished
+        )
+        //saveStateToDatabase()
+        viewModelScope.launch {
+            movieDao.upsertMovie(newState)
+        }
 
+    }
 
     private fun findWord(
         movieWords: Map<Set<Int>, String>,

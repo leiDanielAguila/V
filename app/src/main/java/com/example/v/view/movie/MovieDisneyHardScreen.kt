@@ -90,6 +90,7 @@ fun MovieDisneyHardMainScreen(
         gameOverColor = darkRed
         isLose = true
     } else if (gameOverStatus == 2) {
+        movieViewModel.changeFinishedState(movieID = 3)
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen

@@ -1,5 +1,6 @@
 package com.example.v.view
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -154,9 +156,19 @@ fun MovieCard(
 @Composable
 fun TechnologyCard() {
 
+    val context = LocalContext.current
+    val movieDao = remember { AppDatabase.getDatabase(context).newMovieDao() }
+    val movieViewModel = remember { MovieViewModel(movieDao) }
+    val movieUiState by movieViewModel.movieUiState.collectAsState()
+    val movieState by movieViewModel.movieState.collectAsState()
+
     val lock by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.lock))
 
-    // var isGameCompleted
+    val isGameCompleted: Boolean = when {
+        movieState.disneyEasyFinished && movieState.disneyMediumFinished &&
+                movieState.disneyHardFinished && movieState.superheroEasyFinished -> true
+        else -> false
+    }
 
     var isPlaying by remember {mutableStateOf(false)}
 
@@ -193,11 +205,13 @@ fun TechnologyCard() {
             horizontalAlignment = Alignment.End,
             verticalArrangement = Arrangement.Center
         ){
-            LottieAnimation(
-                composition = lock,
-               // iterations = Int.MAX_VALUE
-                progress = {progress}
-            )
+            AnimatedVisibility(!isGameCompleted) {
+                LottieAnimation(
+                    composition = lock,
+                    // iterations = Int.MAX_VALUE
+                    progress = {progress}
+                )
+            }
         }
 //        Row(
 //            modifier = Modifier

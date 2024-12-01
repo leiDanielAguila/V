@@ -87,6 +87,7 @@ fun MovieSuperHeroEasyMainScreen(
         gameOverColor = darkRed
         isLose = true
     } else if (gameOverStatus == 2) {
+        movieViewModel.changeFinishedState(movieID = 4)
         isGameOver = true
         gameOverText = "Level Complete!"
         gameOverColor = lightGreen
