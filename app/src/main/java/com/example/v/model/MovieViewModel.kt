@@ -486,7 +486,12 @@ class MovieViewModel(
             disneyEasyGameLives = if (movieID == 1) 3 else currentState.disneyEasyGameLives,
             disneyMediumGameLives = if (movieID == 2) 3 else currentState.disneyMediumGameLives,
             disneyHardGameLives = if (movieID == 3) 3 else currentState.disneyHardGameLives,
-            superheroEasyGameLives = if (movieID == 4) 3 else currentState.superheroEasyGameLives
+            superheroEasyGameLives = if (movieID == 4) 3 else currentState.superheroEasyGameLives,
+            disneyEasyTileStorage = if (movieID == 1) mutableSetOf() else currentState.disneyEasyTileStorage,
+            disneyMediumTileStorage = if (movieID == 2) mutableSetOf() else currentState.disneyMediumTileStorage,
+            disneyHardTileStorage = if (movieID == 3) mutableSetOf() else currentState.disneyHardTileStorage,
+            superheroEasyTileStorage = if (movieID == 4) mutableSetOf() else currentState.superheroEasyTileStorage,
+            userScore = currentState.userScore - 10
         )
         saveStateToDatabase()
     }
