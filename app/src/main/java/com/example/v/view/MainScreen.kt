@@ -18,8 +18,11 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Check
 import androidx.compose.material.icons.rounded.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
@@ -27,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -41,9 +45,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.v.BackgroundMusicPlayer
 import com.example.v.R
 import com.example.v.Screen
 import com.example.v.data.AppDatabase
@@ -51,6 +55,7 @@ import com.example.v.model.MovieViewModel
 import com.example.v.service.SoundManager
 import com.example.v.ui.theme.BackgroundScreenColor
 import com.example.v.ui.theme.Lalezar
+import com.example.v.ui.theme.Spenbeb
 import com.example.v.ui.theme.VTheme
 import com.example.v.ui.theme.cream
 import com.example.v.ui.theme.darkRed
@@ -347,37 +352,71 @@ fun Settings(
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = "Dyslexic Font",
-                        color = cream,
-                        fontSize = 24.sp,
-                        fontFamily = Lalezar,
-                    )
-
-                    Switch(
-                        checked = isFontChecked,
-                        onCheckedChange = { isFontChecked = it },
-                        thumbContent = if (isFontChecked) {
-                            {
-                                Icon(
-                                    imageVector = Icons.Rounded.Check,
-                                    contentDescription = null,
-                                    tint = Color.DarkGray
-                                )
-                            }
-                        } else {null},
-                        colors = SwitchDefaults.colors(
-                            checkedThumbColor = Color.Green,
-                            checkedTrackColor = Color.White,
-                            uncheckedThumbColor = onyx,
-                            uncheckedTrackColor = Color.Gray
-                        )
-                    )
+//                    Text(
+//                        text = "Dyslexic Font",
+//                        color = cream,
+//                        fontSize = 24.sp,
+//                        fontFamily = Lalezar,
+//                    )
+//
+//                    Switch(
+//                        checked = isFontChecked,
+//                        onCheckedChange = { isFontChecked = it },
+//                        thumbContent = if (isFontChecked) {
+//                            {
+//                                Icon(
+//                                    imageVector = Icons.Rounded.Check,
+//                                    contentDescription = null,
+//                                    tint = Color.DarkGray
+//                                )
+//                            }
+//                        } else {null},
+//                        colors = SwitchDefaults.colors(
+//                            checkedThumbColor = Color.Green,
+//                            checkedTrackColor = Color.White,
+//                            uncheckedThumbColor = onyx,
+//                            uncheckedTrackColor = Color.Gray
+//                        )
+//                    )
+                    VolumeControl()
                 }
             }
         }
     }
 }
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun VolumeControl() {
+    var volume by remember { mutableFloatStateOf(1f) } // Default to maximum volume (1.0f)
+
+    Column(
+        modifier = Modifier
+            .padding(16.dp)
+            .fillMaxWidth()
+    ) {
+        Text(text = "Adjust Volume", fontFamily = Lalezar, fontSize = 22.sp, color = cream)
+        Spacer(modifier = Modifier.padding(8.dp))
+        Slider(
+            value = volume,
+            onValueChange = {
+                volume = it
+                BackgroundMusicPlayer.setVolume(it)
+            },
+            valueRange = 0f..1f, // Volume range: 0 (mute) to 1 (max)
+            steps = 9, // Optional: Number of intermediate stops
+            modifier = Modifier.fillMaxWidth(),
+            colors = SliderDefaults.colors(
+                thumbColor = Color.Green,
+                activeTrackColor = Color.Green,
+                inactiveTrackColor = Color.White
+            )
+        )
+        Spacer(modifier = Modifier.padding(8.dp))
+        Text(text = "Volume: ${(volume * 100).toInt()}%", fontFamily = Spenbeb, color = cream)
+    }
+}
+
 
 
 @Preview

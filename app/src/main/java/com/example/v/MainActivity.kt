@@ -1,6 +1,9 @@
 package com.example.v
 
+import android.content.Context
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +14,9 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.LifecycleOwner
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,13 +36,21 @@ import com.example.v.view.superhero.MovieSuperHeroEasyMainScreen
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        BackgroundMusicPlayer.start(this, R.raw.liod)
         SoundManager.initialize(this)
         enableEdgeToEdge()
+        lifecycle.addObserver(object : LifecycleEventObserver {
+            override fun onStateChanged(source: LifecycleOwner, event: Lifecycle.Event) {
+                when (event) {
+                    Lifecycle.Event.ON_PAUSE -> BackgroundMusicPlayer.pause()
+                    Lifecycle.Event.ON_RESUME -> BackgroundMusicPlayer.resume()
+
+                    else -> Unit
+                }
+            }
+        })
         setContent {
             VTheme {
-
-                
-
                 val navController = rememberNavController()
                 val database = Room.databaseBuilder(
                     applicationContext,
@@ -78,17 +92,11 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+    override fun onDestroy() {
+        super.onDestroy()
+        BackgroundMusicPlayer.stop()
+    }
 }
-
-//@Serializable
-//object MainMenu
-//
-//@Serializable
-//object CategoryScreen
-//
-//@Serializable
-//object MovieEasy
-
 
 enum class Screen(val route: String) {
     MainMenu("MainMenu"),
@@ -101,3 +109,45 @@ enum class Screen(val route: String) {
     MovieScifiEasy("MovieScifiEasy"),
     GameEnd("GameEnd")
 }
+
+object BackgroundMusicPlayer {
+    private var mediaPlayer: MediaPlayer? = null
+
+    fun start(context: Context, resId: Int) {
+        try {
+            if (mediaPlayer == null) {
+                mediaPlayer = MediaPlayer.create(context, resId).apply {
+                    isLooping = true
+                    start()
+                }
+                Log.d("BackgroundMusicPlayer", "MediaPlayer started")
+            }
+        } catch (e: Exception) {
+            Log.e("BackgroundMusicPlayer", "Error starting MediaPlayer", e)
+        }
+    }
+
+    fun stop() {
+        mediaPlayer?.apply {
+            stop()
+            release()
+        }
+        mediaPlayer = null
+        Log.d("BackgroundMusicPlayer", "MediaPlayer stopped")
+    }
+
+    fun pause() {
+        mediaPlayer?.pause()
+        Log.d("BackgroundMusicPlayer", "MediaPlayer paused")
+    }
+
+    fun resume() {
+        mediaPlayer?.start()
+        Log.d("BackgroundMusicPlayer", "MediaPlayer resumed")
+    }
+
+    fun setVolume(volume: Float) {
+        mediaPlayer?.setVolume(volume, volume)
+    }
+}
+

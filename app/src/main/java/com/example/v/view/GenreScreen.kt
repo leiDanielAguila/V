@@ -197,7 +197,7 @@ fun GenreScreen(
                 LaunchedEffect(thankYouModule) {
                     if (thankYouModule) {
                         SoundManager.win()
-                        delay(5000)
+                        delay(3000)
                         thankYouModule = false
                     }
 
@@ -317,7 +317,6 @@ fun SciFiGenreButton(
         modifier = Modifier
             .size(width = 300.dp, height = 93.dp)
             .clickable {
-                navController.navigate(Screen.CategoryScreen)
             },
         colors = CardDefaults.cardColors(Color.LightGray),
         elevation = CardDefaults.cardElevation(defaultElevation = 12.dp)
